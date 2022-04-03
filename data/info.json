@@ -1,0 +1,87 @@
+{
+    "map": {
+        "1": {
+            "cam": true,
+            "neighbours": {
+                "2": "Сменить позицию"
+            },
+            "locator": "Zero",
+            "img": ""
+        },
+        "2": {
+            "cam": false,
+            "neighbours": {
+                "1": "Сменить позицию",
+                "3": "Прихожая"
+            },
+            "locator": "Max",
+            "img": ""
+        },
+        "3": {
+            "cam": false,
+            "neighbours": {
+                "2": "Сральня",
+                "4": "Гостевая",
+                "9": "Коридор"
+            },
+            "locator": "Elc",
+            "img": ""
+        },
+        "4": {
+            "cam": false,
+            "neighbours": {
+                "3": "Прихожая",
+                "5": "Сменить позицию"
+            },
+            "locator": "Zero",
+            "img": ""
+        },
+        "5": {
+            "cam": false,
+            "neighbours": {
+                "4": "Сменить позицию",
+                "6": "Комната бабушки"
+            },
+            "locator": "Zero",
+            "img": ""
+        },
+        "6": {
+            "cam": false,
+            "neighbours": {
+                "5": "Гостевая",
+                "7": "Моя комната"
+            },
+            "locator": "Zero",
+            "img": "views/grandma.JPG"
+        },
+        "7": {
+            "cam": true,
+            "neighbours": {
+                "6": "Комната бабушки",
+                "8": "Кухня",
+                "9": "Коридор"
+            },
+            "locator": "Vasia",
+            "img": "views/my.JPG"
+        },
+        "8": {
+            "cam": false,
+            "neighbours": {
+                "7": "Моя комната",
+                "9": "Коридор"
+            },
+            "locator": "Zero",
+            "img": "views/kitchen.JPG"
+        },
+        "9": {
+            "cam": false,
+            "neighbours": {
+                "3": "Прихожая",
+                "8": "Кухня",
+                "7": "Моя комната"
+            },
+            "locator": "Zero",
+            "img": "views/corridor.JPG"
+        }
+    }
+}
