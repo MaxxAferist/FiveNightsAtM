@@ -1,16 +1,16 @@
-from gettext import translation
 import pygame as pg
 import sys
 import os
 from ctypes import *
 from PIL import Image, ImageEnhance
 import json
-import os
+import datetime
+import random
 
 
 pg.init()
 pg.mixer.init()
-FPS = 60
+FPS = 35
 WIDTH = windll.user32.GetSystemMetrics(0)
 HEIGHT = windll.user32.GetSystemMetrics(1)
 
@@ -60,7 +60,7 @@ class Menu():
         self.screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
         self.clock = pg.time.Clock()
         self.all_sprites = pg.sprite.Group()
-        fon_image = load_image('menu_fon.png')
+        fon_image = load_image('menu/menu_fon.png')
         self.fon = pg.sprite.Sprite(self.all_sprites)
         self.fon.image = fon_image
         self.fon.rect = self.fon.image.get_rect()
@@ -83,7 +83,7 @@ class Menu():
 
     def run(self):
         pg.mixer.music.load('data/sounds/Fnaf_theme.mp3')
-        pg.mixer.music.play()
+        pg.mixer.music.play(-1)
         while self.running:
             for event in pg.event.get():
                 if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
@@ -199,6 +199,70 @@ class RoomButton(pg.sprite.Sprite):
             self.text = self.f.render(self.name, True, (0, 0, 0))
             self.image.blit(self.text, (self.left_top, self.up_top))
 
+class Monster():
+    def __init__(self, various, t_delta, name, other):
+        self.various = various
+        self.t_delta = t_delta
+        self.name = name
+        self.other = other
+        self.room_id = self.currect_room_id()
+        self.step_time = datetime.datetime.now()
+
+    def update(self):
+        time = datetime.datetime.now()
+        timedelta = int((time - self.step_time).total_seconds())
+        if timedelta >= self.t_delta:
+            print('yeees')
+            choises = [self.room_random] * self.various + [None] * (100 - self.various)
+            action = random.choice(choises)
+            if action:
+                action()
+            self.step_time = datetime.datetime.now()
+
+    def room_random(self):
+        room_id = random.choice(self.get_neighbours())
+        self.trans_room(room_id)
+
+    def currect_room_id(self):
+        return [key for key in self.other.map if self.name in self.other.map[key]["locator"]][0]
+
+    def get_neighbours(self):
+        cur_room_id = self.currect_room_id()
+        neigs = list((self.other.map[cur_room_id]["neighbours"].keys()))
+        return neigs
+
+    def trans_room(self, room_id):
+        cur_rom = self.currect_room_id()
+        if self.other.map[room_id]["locator"] == 'Vasia':
+            print('Ахахахха сдох')
+            pg.quit()
+        elif self.other.map[room_id]["locator"] == 'Zero':
+            cur_room = self.currect_room_id()
+            self.other.map[room_id]["locator"], self.other.map[cur_room][
+                "locator"] = self.other.map[cur_room]["locator"], self.other.map[room_id]["locator"]
+            print(f'{self.name} перешёл из {cur_rom} в {room_id}')
+        else:
+            cur_room = self.currect_room_id()
+            self.other.map[room_id]["locator"] = 'Max, Elc'
+            self.other.map[cur_room]["locator"] = 'Zero'
+            print(f'{self.name} перешёл из {cur_rom} в {room_id}')
+
+
+class Timer():
+    def __init__(self, other):
+        super().__init__()
+        self.start_time = datetime.datetime.now()
+        self.x = WIDTH - WIDTH // 12
+        self.y = 0
+        self.other = other
+        self.font_size = 40
+        self.f = pg.font.Font('data/FNAF.ttf', self.font_size)
+
+    def update(self):
+        self.time = datetime.datetime.now()
+        timedelta = int((self.time - self.start_time).total_seconds()) // 100
+        self.text = self.f.render(f'{timedelta} AM', True, (255, 255, 255))
+        self.other.fon_sprite.image.blit(self.text, (self.x, self.y))
 
 class Game():
     def __init__(self):
@@ -208,19 +272,22 @@ class Game():
         self.running = True
 
     def run(self):
-        pg.mixer.music.load('data/sounds/Main_theme.mp3')
-        pg.mixer.music.play()
+        pg.mixer.music.load('data/sounds/Main_theme2.mp3')
+        pg.mixer.music.play(-1)
         self.load_info()
         self.map = self.get_map()
         self.load_images()
-        self.add_sprite()
         self.get_all_videos()
+        self.add_sprite()
         while self.running:
             self.screen.fill(pg.Color(0, 0, 0))
             for event in pg.event.get():
                 if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     termit()
             self.rotate_head()
+            self.monsters_update()
+            self.fon_sprite.image = self.current_image()
+            self.timer.update()
             self.all_sprites.update()
             self.buttons_group.update()
             self.all_sprites.draw(self.screen)
@@ -229,7 +296,7 @@ class Game():
             self.clock.tick(FPS)
 
     def rotate_head(self):
-        step = 25
+        step = 40
         pos_x = pg.mouse.get_pos()[0]
         if pos_x >= WIDTH - 5:
             if self.fon_sprite.rect.x + self.fon_sprite.rect.w - step >= WIDTH:
@@ -246,7 +313,14 @@ class Game():
         self.fon_sprite = pg.sprite.Sprite(self.all_sprites)
         self.fon_sprite.image = self.current_image()
         self.fon_sprite.rect = self.fon_sprite.image.get_rect()
+        self.timer = Timer(self)
         self.arrange_buttons(self.currect_room_id())
+        self.max = Monster(40, 3, "Max", self)
+        self.elc = Monster(30, 3, "Elc", self)
+
+    def monsters_update(self):
+        self.max.update()
+        self.elc.update()
 
     def load_info(self):
         with open('data/info.json', encoding='utf-8') as file:
@@ -273,12 +347,13 @@ class Game():
     def current_image(self):
         current_room = [key for key in self.map if self.map[key]
                         ["locator"] == "Vasia"][0]
-        return self.room_images[current_room]
+        return self.room_images[current_room].copy()
 
     def currect_room_id(self):
         return [key for key in self.map if self.map[key]["locator"] == "Vasia"][0]
 
     def trans_room(self, room_id):
+        self.play_trans(self.currect_room_id(), room_id)
         if self.map[room_id]["locator"] != 'Zero':
             print('Ахахахха сдох')
             pg.quit()
@@ -312,7 +387,7 @@ class Game():
                        '5_4', '5_6', '6_5', '6_7', '7_6', '7_8', '7_9', '8_7',
                        '8_9', '9_7', '9_8', '9_3']
         self.video = {}
-        for trans in translation:
+        for trans in transitions:
             try:
                 self.video[trans] = self.get_frames_from_dir(trans)
             except:
@@ -322,8 +397,9 @@ class Game():
         files = os.listdir(f'data/Transitions/{trans}')
         images = []
         for file in files:
-            images.append(pg.transform.scale(
-                load_image(f'Transitions/{trans}/{file}'), (WIDTH, HEIGHT)))
+            if file.lower().endswith('png') or file.lower().endswith('jpg'):
+                images.append(pg.transform.scale(
+                    load_image(f'Transitions/{trans}/{file}'), (WIDTH, HEIGHT)))
         return images
 
 if __name__ == '__main__':

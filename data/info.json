@@ -6,7 +6,7 @@
                 "2": "Сменить позицию"
             },
             "locator": "Zero",
-            "img": ""
+            "img": "views/1.JPEG"
         },
         "2": {
             "cam": false,
@@ -15,7 +15,7 @@
                 "3": "Прихожая"
             },
             "locator": "Max",
-            "img": ""
+            "img": "views/2.JPEG"
         },
         "3": {
             "cam": false,
@@ -25,7 +25,7 @@
                 "9": "Коридор"
             },
             "locator": "Elc",
-            "img": ""
+            "img": "views/3.JPG"
         },
         "4": {
             "cam": false,
@@ -52,7 +52,7 @@
                 "7": "Моя комната"
             },
             "locator": "Zero",
-            "img": "views/grandma.JPG"
+            "img": "views/6.JPG"
         },
         "7": {
             "cam": true,
@@ -62,7 +62,7 @@
                 "9": "Коридор"
             },
             "locator": "Vasia",
-            "img": "views/my.JPG"
+            "img": "views/7.JPG"
         },
         "8": {
             "cam": false,
@@ -71,7 +71,7 @@
                 "9": "Коридор"
             },
             "locator": "Zero",
-            "img": "views/kitchen.JPG"
+            "img": "views/8.JPG"
         },
         "9": {
             "cam": false,
@@ -81,7 +81,7 @@
                 "7": "Моя комната"
             },
             "locator": "Zero",
-            "img": "views/corridor.JPG"
+            "img": "views/9.JPG"
         }
     }
 }
