@@ -16,6 +16,7 @@ HEIGHT = windll.user32.GetSystemMetrics(1)
 
 
 def pilToSurface(pilImage):
+
     return pg.image.frombuffer(pilImage.tobytes(), pilImage.size, pilImage.mode)
 
 
