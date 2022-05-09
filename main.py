@@ -2,6 +2,8 @@ import pygame as pg
 import sys
 import os
 from ctypes import *
+
+import pygame.sprite
 from PIL import Image, ImageEnhance
 import json
 import datetime
@@ -16,7 +18,6 @@ HEIGHT = windll.user32.GetSystemMetrics(1)
 
 
 def pilToSurface(pilImage):
-
     return pg.image.frombuffer(pilImage.tobytes(), pilImage.size, pilImage.mode)
 
 
@@ -25,7 +26,7 @@ def surfaceToPil(surface):
     return Image.frombuffer("RGBA", surface.get_size(), pil_string_image)
 
 
-def lowBrightness(image, factor):
+def lowBrigthness(image, factor):
     pil_image = surfaceToPil(image)
     enhancer = ImageEnhance.Brightness(pil_image)
     image_final = enhancer.enhance(factor)
@@ -46,9 +47,10 @@ def termit():
     sys.exit()
 
 
-def go_game():
-    game = Game()
+def go_game(videos=None):
+    game = Game(videos)
     game.run()
+
 
 
 def go_menu():
@@ -235,17 +237,24 @@ class Monster():
     def trans_room(self, room_id):
         cur_rom = self.currect_room_id()
         if self.other.map[room_id]["locator"] == 'Vasia':
-            print('Ахахахха сдох')
+            print(self.name)
+            self.other.show_skrimer(self.name)
             pg.quit()
         elif self.other.map[room_id]["locator"] == 'Zero':
             cur_room = self.currect_room_id()
-            self.other.map[room_id]["locator"], self.other.map[cur_room][
-                "locator"] = self.other.map[cur_room]["locator"], self.other.map[room_id]["locator"]
+            self.other.map[room_id]["locator"] = self.name
+            if self.other.map[cur_room]["locator"] == self.name:
+                self.other.map[cur_room]["locator"] = 'Zero'
+            else:
+                monsters = ['Max', 'Elc']
+                del monsters[monsters.index(self.name)]
+                self.other.map[cur_room]["locator"] = monsters[0]
             print(f'{self.name} перешёл из {cur_rom} в {room_id}')
         else:
             cur_room = self.currect_room_id()
             self.other.map[room_id]["locator"] = 'Max, Elc'
             self.other.map[cur_room]["locator"] = 'Zero'
+            print(self.other.map[room_id]["locator"])
             print(f'{self.name} перешёл из {cur_rom} в {room_id}')
 
 
@@ -266,11 +275,12 @@ class Timer():
         self.other.fon_sprite.image.blit(self.text, (self.x, self.y))
 
 class Game():
-    def __init__(self):
+    def __init__(self, videos=None):
         self.screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
         self.clock = pg.time.Clock()
         self.all_sprites = pg.sprite.Group()
         self.running = True
+        self.video = videos
 
     def run(self):
         pg.mixer.music.load('data/sounds/Main_theme2.mp3')
@@ -278,7 +288,8 @@ class Game():
         self.load_info()
         self.map = self.get_map()
         self.load_images()
-        self.get_all_videos()
+        if not self.video:
+            self.get_all_videos()
         self.add_sprite()
         while self.running:
             self.screen.fill(pg.Color(0, 0, 0))
@@ -293,6 +304,32 @@ class Game():
             self.buttons_group.update()
             self.all_sprites.draw(self.screen)
             self.buttons_group.draw(self.screen)
+            pg.display.flip()
+            self.clock.tick(FPS)
+
+    def show_skrimer(self, name_monster):
+        pygame.mixer.music.stop()
+        self.scrimer_sp_group = pygame.sprite.Group()
+        image_names = os.listdir(f'data/ugly_monsters/{name_monster}')
+        image_name = random.choice(image_names)
+        image = load_image(f'ugly_monsters/{name_monster}/{image_name}')
+        image_resize = pygame.transform.scale(image, (WIDTH, HEIGHT))
+        self.scrimer_image_sprite = pygame.sprite.Sprite(self.scrimer_sp_group)
+        self.scrimer_image_sprite.image = image_resize
+        self.scrimer_image_sprite.rect = image_resize.get_rect()
+
+        sounds = os.listdir(f'data/sounds/{name_monster}')
+        sound = random.choice(sounds)
+        sound = pygame.mixer.Sound(f'data/sounds/{name_monster}/{sound}')
+        sound.play()
+        while self.running:
+            self.screen.fill(pg.Color(0, 0, 0))
+            for event in pg.event.get():
+                if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+                    termit()
+                elif event.type == pg.KEYDOWN and event.key == pg.K_RETURN:
+                    go_game(self.video)
+            self.scrimer_sp_group.draw(self.screen)
             pg.display.flip()
             self.clock.tick(FPS)
 
@@ -316,8 +353,8 @@ class Game():
         self.fon_sprite.rect = self.fon_sprite.image.get_rect()
         self.timer = Timer(self)
         self.arrange_buttons(self.currect_room_id())
-        self.max = Monster(40, 3, "Max", self)
-        self.elc = Monster(30, 3, "Elc", self)
+        self.max = Monster(40, 10, "Max", self)
+        self.elc = Monster(30, 15, "Elc", self)
 
     def monsters_update(self):
         self.max.update()
@@ -356,7 +393,9 @@ class Game():
     def trans_room(self, room_id):
         self.play_trans(self.currect_room_id(), room_id)
         if self.map[room_id]["locator"] != 'Zero':
-            print('Ахахахха сдох')
+            names = self.map[room_id]["locator"].split(', ')
+            name = random.choice(names)
+            self.show_skrimer(name)
             pg.quit()
         else:
             cur_room = self.currect_room_id()

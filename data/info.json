@@ -34,7 +34,7 @@
                 "5": "Сменить позицию"
             },
             "locator": "Zero",
-            "img": ""
+            "img": "views/4.JPG"
         },
         "5": {
             "cam": false,
@@ -43,7 +43,7 @@
                 "6": "Комната бабушки"
             },
             "locator": "Zero",
-            "img": ""
+            "img": "views/5.JPG"
         },
         "6": {
             "cam": false,
