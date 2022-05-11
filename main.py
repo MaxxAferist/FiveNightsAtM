@@ -12,7 +12,7 @@ import random
 
 pg.init()
 pg.mixer.init()
-FPS = 35
+FPS = 30
 WIDTH = windll.user32.GetSystemMetrics(0)
 HEIGHT = windll.user32.GetSystemMetrics(1)
 
@@ -274,6 +274,7 @@ class Timer():
         self.text = self.f.render(f'{timedelta} AM', True, (255, 255, 255))
         self.other.fon_sprite.image.blit(self.text, (self.x, self.y))
 
+
 class Game():
     def __init__(self, videos=None):
         self.screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
@@ -296,9 +297,13 @@ class Game():
             for event in pg.event.get():
                 if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     termit()
+            keys = pg.key.get_pressed()
+            if keys[pygame.K_SPACE]:
+                self.fon_sprite.image = self.flash_light()
+            else:
+                self.fon_sprite.image = self.current_image()
             self.rotate_head()
             self.monsters_update()
-            self.fon_sprite.image = self.current_image()
             self.timer.update()
             self.all_sprites.update()
             self.buttons_group.update()
@@ -306,6 +311,41 @@ class Game():
             self.buttons_group.draw(self.screen)
             pg.display.flip()
             self.clock.tick(FPS)
+
+    def flash_light(self):
+        try:
+            cur_room_id = self.currect_room_id()
+            neighbours = self.map[cur_room_id]["neighbours"]
+            neig_keys = list(neighbours.keys())
+            max_id = [key for key in self.map if 'Max' in self.map[key]["locator"]][0]
+            elc_id = [key for key in self.map if 'Elc' in self.map[key]["locator"]][0]
+            ids = []
+            if max_id in neig_keys:
+                ids.append(max_id)
+            if elc_id in neig_keys:
+                ids.append(elc_id)
+            ids = sorted(list(set(ids)))
+            dir_name = '_'.join(ids)
+            if len(ids) == 2:
+                file_name = '_'.join(map(lambda x: self.map[x]["locator"], ids))
+                image = load_image(f'light/{cur_room_id}/{dir_name}/{file_name}.jpg')
+            elif len(ids) == 1:
+                mnstrs = self.map[ids[0]]["locator"].split(', ')
+                file_name = '_'.join(mnstrs)
+                image = load_image(f'light/{cur_room_id}/{dir_name}/{file_name}.jpg')
+            else:
+                file_name = cur_room_id
+                image = load_image(f'light/{cur_room_id}/{file_name}.jpg')
+            k = image.get_height() / HEIGHT
+            # if int(image.get_width() / k) < WIDTH:
+            #     image = pg.transform.scale(image, (WIDTH, HEIGHT))
+            # else:
+            image = pg.transform.scale(image, (int(image.get_width() / k), HEIGHT))
+            return image
+        except Exception as e:
+            print(e)
+
+
 
     def show_skrimer(self, name_monster):
         pygame.mixer.music.stop()
@@ -434,13 +474,14 @@ class Game():
                 pass
 
     def get_frames_from_dir(self, trans):
-        files = os.listdir(f'data/Transitions/{trans}')
+        files = os.listdir(f'data/Transitions_copy/{trans}')
         images = []
         for file in files:
             if file.lower().endswith('png') or file.lower().endswith('jpg'):
                 images.append(pg.transform.scale(
-                    load_image(f'Transitions/{trans}/{file}'), (WIDTH, HEIGHT)))
+                    load_image(f'Transitions_copy/{trans}/{file}'), (WIDTH, HEIGHT)))
         return images
+
 
 if __name__ == '__main__':
     go_menu()

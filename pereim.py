@@ -1,5 +1,14 @@
-transitions = ['1_2', '2_1', '2_3', '3_2', '3_4', '3_9', '4_3', '4_5',
-                       '5_4', '5_6', '6_5', '6_7', '7_6', '7_8', '7_9', '8_7',
-                       '8_9', '9_7', '9_8', '9_3']
+path = "data\Transitions_copy"
+import os
 
-print('\n'.join(transitions))
+dirs = os.listdir(path)
+for dir in dirs:
+    cur_path = path + '/' + dir
+    files = os.listdir(cur_path)
+    photos = []
+    for file in files:
+        if file.endswith(('png', 'jpg')):
+            photos.append(file)
+    for photo in enumerate(photos):
+        if photo[0] % 3 != 0:
+            os.remove(f'{cur_path}/{photo[1]}')
