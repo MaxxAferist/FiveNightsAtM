@@ -14,7 +14,7 @@
                 "1": "Сменить позицию",
                 "3": "Прихожая"
             },
-            "locator": "Zero",
+            "locator": "Max",
             "img": "views/2.JPEG"
         },
         "3": {
@@ -24,7 +24,7 @@
                 "4": "Гостевая",
                 "9": "Коридор"
             },
-            "locator": "Zero",
+            "locator": "Vasia",
             "img": "views/3.JPG"
         },
         "4": {
@@ -61,7 +61,7 @@
                 "8": "Кухня",
                 "9": "Коридор"
             },
-            "locator": "Elc",
+            "locator": "Zero",
             "img": "views/7.JPG"
         },
         "8": {
@@ -70,7 +70,7 @@
                 "7": "Моя комната",
                 "9": "Коридор"
             },
-            "locator": "Max",
+            "locator": "Zero",
             "img": "views/8.JPG"
         },
         "9": {
@@ -80,7 +80,7 @@
                 "8": "Кухня",
                 "7": "Моя комната"
             },
-            "locator": "Vasia",
+            "locator": "Elc",
             "img": "views/9.JPG"
         }
     }

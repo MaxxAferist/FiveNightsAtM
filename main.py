@@ -38,7 +38,7 @@ def load_image(name, colorkey=None):
     # если файл не существует, то выходим
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
+        raise 'Файл не найден. Подробности в консоли'
     image = pg.image.load(fullname)
     return image
 
@@ -299,7 +299,10 @@ class Game():
                     termit()
             keys = pg.key.get_pressed()
             if keys[pygame.K_SPACE]:
-                self.fon_sprite.image = self.flash_light()
+                try:
+                    self.fon_sprite.image = self.flash_light()
+                except:
+                    pass
             else:
                 self.fon_sprite.image = self.current_image()
             self.rotate_head()
@@ -337,10 +340,10 @@ class Game():
                 file_name = cur_room_id
                 image = load_image(f'light/{cur_room_id}/{file_name}.jpg')
             k = image.get_height() / HEIGHT
-            # if int(image.get_width() / k) < WIDTH:
-            #     image = pg.transform.scale(image, (WIDTH, HEIGHT))
-            # else:
-            image = pg.transform.scale(image, (int(image.get_width() / k), HEIGHT))
+            if int(image.get_width() / k) < WIDTH:
+                image = pg.transform.scale(image, (WIDTH, HEIGHT))
+            else:
+                image = pg.transform.scale(image, (int(image.get_width() / k), HEIGHT))
             return image
         except Exception as e:
             print(e)
