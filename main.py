@@ -1,8 +1,8 @@
+from importlib.resources import path
 import pygame as pg
 import sys
 import os
 from ctypes import *
-
 import pygame.sprite
 from PIL import Image, ImageEnhance
 import json
@@ -87,6 +87,7 @@ class Menu():
     def run(self):
         pg.mixer.music.load('data/sounds/Fnaf_theme.mp3')
         pg.mixer.music.play(-1)
+        pg.mixer.music.set_volume(0.5)
         while self.running:
             for event in pg.event.get():
                 if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
@@ -210,17 +211,27 @@ class Monster():
         self.other = other
         self.room_id = self.currect_room_id()
         self.step_time = datetime.datetime.now()
+        self.add_sounds()
 
     def update(self):
         time = datetime.datetime.now()
         timedelta = int((time - self.step_time).total_seconds())
         if timedelta >= self.t_delta:
             print('yeees')
+            choises = [random.choice(self.sounds).play] * 10 + [None] * 90
+            play_song = random.choice(choises)
+            if play_song:
+                play_song()
             choises = [self.room_random] * self.various + [None] * (100 - self.various)
             action = random.choice(choises)
             if action:
                 action()
             self.step_time = datetime.datetime.now()
+
+    def add_sounds(self):
+        path = os.path.join(os.getcwd(), 'data/sounds/sharp')
+        sounds_names = os.listdir(path)
+        self.sounds = [pg.mixer.Sound(f'data/sounds/sharp/{x}') for x in sounds_names]
 
     def room_random(self):
         room_id = random.choice(self.get_neighbours())
@@ -275,6 +286,26 @@ class Timer():
         self.other.fon_sprite.image.blit(self.text, (self.x, self.y))
 
 
+class Battery():
+    def __init__(self, other):
+        super().__init__()
+        self.x = 10
+        self.y = 10
+        self.other = other
+        self.s = {6: None,
+        5: None,
+        4: None,
+        3: None,
+        2: None,
+        1: None,
+        0: None}
+
+    def update(self):
+        key = self.other.charge // 20 + 1
+        self.image = self.s[key]
+        self.other.fon_sprite.image.blit(self.image, (self.x, self.y))
+
+
 class Game():
     def __init__(self, videos=None):
         self.screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
@@ -282,16 +313,22 @@ class Game():
         self.all_sprites = pg.sprite.Group()
         self.running = True
         self.video = videos
+        self.flash_light_on = pg.mixer.Sound('data/sounds/flashlight_on.mp3')
+        self.flash_light_off = pg.mixer.Sound('data/sounds/flashlight_off.mp3')
+        self.charge = 100
 
     def run(self):
-        pg.mixer.music.load('data/sounds/Main_theme2.mp3')
-        pg.mixer.music.play(-1)
         self.load_info()
         self.map = self.get_map()
         self.load_images()
+        self.loads_light_photos()
         if not self.video:
             self.get_all_videos()
         self.add_sprite()
+        pg.mixer.music.load('data/sounds/Main_theme_4.mp3')
+        pg.mixer.music.play(-1)
+        pg.mixer.music.set_volume(0.1)
+        self.flash_on = False
         while self.running:
             self.screen.fill(pg.Color(0, 0, 0))
             for event in pg.event.get():
@@ -299,12 +336,18 @@ class Game():
                     termit()
             keys = pg.key.get_pressed()
             if keys[pygame.K_SPACE]:
+                if not self.flash_on:
+                    self.flash_light_on.play()
+                    self.flash_on = True
                 try:
-                    self.fon_sprite.image = self.flash_light()
+                    self.fon_sprite.image = self.flash_light().copy()
                 except:
                     pass
             else:
-                self.fon_sprite.image = self.current_image()
+                if self.flash_on:
+                    self.flash_light_off.play()
+                    self.flash_on = False
+                self.fon_sprite.image = self.current_image().copy()
             self.rotate_head()
             self.monsters_update()
             self.timer.update()
@@ -316,6 +359,7 @@ class Game():
             self.clock.tick(FPS)
 
     def flash_light(self):
+        self.charge -= 0.5
         try:
             cur_room_id = self.currect_room_id()
             neighbours = self.map[cur_room_id]["neighbours"]
@@ -331,19 +375,14 @@ class Game():
             dir_name = '_'.join(ids)
             if len(ids) == 2:
                 file_name = '_'.join(map(lambda x: self.map[x]["locator"], ids))
-                image = load_image(f'light/{cur_room_id}/{dir_name}/{file_name}.jpg')
+                image = self.light_photos[cur_room_id][dir_name][file_name]
             elif len(ids) == 1:
                 mnstrs = self.map[ids[0]]["locator"].split(', ')
                 file_name = '_'.join(mnstrs)
-                image = load_image(f'light/{cur_room_id}/{dir_name}/{file_name}.jpg')
+                image = self.light_photos[cur_room_id][dir_name][file_name]
             else:
                 file_name = cur_room_id
-                image = load_image(f'light/{cur_room_id}/{file_name}.jpg')
-            k = image.get_height() / HEIGHT
-            if int(image.get_width() / k) < WIDTH:
-                image = pg.transform.scale(image, (WIDTH, HEIGHT))
-            else:
-                image = pg.transform.scale(image, (int(image.get_width() / k), HEIGHT))
+                image = self.light_photos[cur_room_id][file_name]
             return image
         except Exception as e:
             print(e)
@@ -397,7 +436,7 @@ class Game():
         self.timer = Timer(self)
         self.arrange_buttons(self.currect_room_id())
         self.max = Monster(40, 10, "Max", self)
-        self.elc = Monster(30, 15, "Elc", self)
+        self.elc = Monster(30, 7, "Elc", self)
 
     def monsters_update(self):
         self.max.update()
@@ -484,6 +523,45 @@ class Game():
                 images.append(pg.transform.scale(
                     load_image(f'Transitions_copy/{trans}/{file}'), (WIDTH, HEIGHT)))
         return images
+
+
+    def loads_light_photos(self):
+        self.light_photos = {}
+        path = os.path.join(os.getcwd(), 'data/light')
+        dirs = os.listdir(path)
+        for room_id in dirs:
+            places = os.listdir(os.path.join(path, room_id))
+            self.light_photos[room_id] = {}
+            for file in places:
+                if os.path.isfile(os.path.join(path, room_id, file)):
+                    try:
+                        img = load_image(f'light/{room_id}/{file}')
+                        file = file[:file.find('.')]
+                        k = img.get_height() / HEIGHT
+                        if int(img.get_width() / k) < WIDTH:
+                            self.light_photos[room_id][file] = pg.transform.scale(
+                                img, (WIDTH, HEIGHT))
+                        else:
+                            self.light_photos[room_id][file] = pg.transform.scale(
+                                img, (int(img.get_width() / k), HEIGHT))
+                    except Exception as e:
+                        print(e)
+                elif os.path.isdir(os.path.join(path, room_id, file)):
+                    file_room = os.listdir(os.path.join(path, room_id, file))
+                    self.light_photos[room_id][file] = {}
+                    for image in file_room:
+                        try:
+                            img = load_image(f'light/{room_id}/{file}/{image}')
+                            k = img.get_height() / HEIGHT
+                            image = image[:image.find('.')]
+                            if int(img.get_width() / k) < WIDTH:
+                                self.light_photos[room_id][file][image] = pg.transform.scale(
+                                    img, (WIDTH, HEIGHT))
+                            else:
+                                self.light_photos[room_id][file][image] = pg.transform.scale(
+                                    img, (int(img.get_width() / k), HEIGHT))
+                        except Exception as e:
+                            print(e)
 
 
 if __name__ == '__main__':
