@@ -292,16 +292,19 @@ class Battery():
         self.x = 10
         self.y = 10
         self.other = other
-        self.s = {6: None,
-        5: None,
-        4: None,
-        3: None,
-        2: None,
-        1: None,
-        0: None}
+        self.s = {5: load_image('Battery/Charge_5 +.png'),
+                  4: load_image('Battery/Charge_5 +.png'),
+                  3: load_image('Battery/Charge_4 +.png'),
+                  2: load_image('Battery/Charge_3 +.png'),
+                  1: load_image('Battery/Charge_2 +.png'),
+                  0: load_image('Battery/Charge_1 +.png'),
+                  -1: load_image('scheme.png')}
 
     def update(self):
-        key = self.other.charge // 20 + 1
+        if self.other.charge == 0:
+            key = -1
+        else:
+            key = self.other.charge // 20
         self.image = self.s[key]
         self.other.fon_sprite.image.blit(self.image, (self.x, self.y))
 
@@ -336,13 +339,15 @@ class Game():
                     termit()
             keys = pg.key.get_pressed()
             if keys[pygame.K_SPACE]:
-                if not self.flash_on:
-                    self.flash_light_on.play()
-                    self.flash_on = True
-                try:
-                    self.fon_sprite.image = self.flash_light().copy()
-                except:
-                    pass
+                if not self.charge == 0:
+                    if not self.flash_on:
+                        self.charge -= 0.5
+                        self.flash_light_on.play()
+                        self.flash_on = True
+                    try:
+                        self.fon_sprite.image = self.flash_light().copy()
+                    except:
+                        pass
             else:
                 if self.flash_on:
                     self.flash_light_off.play()
@@ -351,6 +356,7 @@ class Game():
             self.rotate_head()
             self.monsters_update()
             self.timer.update()
+            self.battery.update()
             self.all_sprites.update()
             self.buttons_group.update()
             self.all_sprites.draw(self.screen)
@@ -359,7 +365,6 @@ class Game():
             self.clock.tick(FPS)
 
     def flash_light(self):
-        self.charge -= 0.5
         try:
             cur_room_id = self.currect_room_id()
             neighbours = self.map[cur_room_id]["neighbours"]
@@ -386,8 +391,6 @@ class Game():
             return image
         except Exception as e:
             print(e)
-
-
 
     def show_skrimer(self, name_monster):
         pygame.mixer.music.stop()
@@ -437,6 +440,7 @@ class Game():
         self.arrange_buttons(self.currect_room_id())
         self.max = Monster(40, 10, "Max", self)
         self.elc = Monster(30, 7, "Elc", self)
+        self.battery = Battery(self)
 
     def monsters_update(self):
         self.max.update()
