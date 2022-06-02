@@ -1,6 +1,3 @@
-from importlib.resources import path
-from multiprocessing.spawn import old_main_modules
-from tracemalloc import start
 import pygame as pg
 import sys
 import os
@@ -14,7 +11,8 @@ import random
 
 pg.init()
 pg.mixer.init()
-FPS = 30
+FPSVIDEOS = 30
+FPS = 60
 WIDTH = windll.user32.GetSystemMetrics(0)
 HEIGHT = windll.user32.GetSystemMetrics(1)
 
@@ -300,7 +298,7 @@ class Battery():
                   2: load_image('Battery/Charge_3 +.png'),
                   1: load_image('Battery/Charge_2 +.png'),
                   0: load_image('Battery/Charge_1 +.png'),
-                  -1: load_image('scheme.png')}
+                  -1: load_image('Camers/scheme.png')}
 
     def update(self):
         if self.other.charge == 0:
@@ -315,23 +313,25 @@ class Camers():
     def __init__(self, other):
         self.other = other
         self.gear = pg.sprite.Sprite(self.other.all_sprites)
-        self.gear.image = load_image('scheme.png')
+        self.orig_gear_image = pg.transform.scale(load_image('Camers/gear1.png'), (WIDTH // 10, WIDTH // 10))
+        self.gear.image = self.orig_gear_image.copy()
         self.gear.rect = self.gear.image.get_rect()
         self.gear.rect.x = WIDTH
-        self.gear.rect.y = HEIGHT // 15
+        self.gear.rect.y = HEIGHT // 10
         self.scr = pg.sprite.Sprite(self.other.all_sprites)
         self.scr.image = pg.transform.scale(load_image('ugly_monsters\Max\scremer.png'), (WIDTH, HEIGHT))
         self.scr.rect = self.scr.image.get_rect()
         self.scr.rect.x = WIDTH
         self.scr.rect.y = 0
         self.scheme = pg.sprite.Sprite(self.other.all_sprites)
-        self.scheme.image = pg.transform.scale(load_image('scheme.png'),
+        self.scheme.image = pg.transform.scale(load_image('Camers/scheme.png'),
                                                (self.scr.rect.w * 2 // 3, HEIGHT * 2 // 3))
         self.scheme.rect = self.scheme.image.get_rect()
         self.scheme.rect.x = self.scr.rect.w // 3 + self.scr.rect.x
         self.scheme.rect.y = self.scr.rect.h // 3 + self.scr.rect.y
         self.active = False
         self.move = False
+        self.gear_angle = 0
 
     def movement(self, event):
         if event.type == pg.KEYDOWN:
@@ -347,7 +347,7 @@ class Camers():
                 self.switch_image("5")
             if event.key == pg.K_6:
                 self.switch_image("6")
-            if event.key == pg.K_ESCAPE:
+            if event.key == pg.K_TAB:
                 self.move = True
 
     def switch_image(self, cum_id):
@@ -355,12 +355,25 @@ class Camers():
 
     def move_left(self):
         self.scr.rect.x -= 50
-        self.gear.image = pg.transform.rotate(self.gear.image, 20)
+        self.gear_angle += 10
+        self.gear_angle = self.gear_angle % 360
+        self.gear.image = pg.transform.rotate(self.orig_gear_image, self.gear_angle)
         self.scheme.rect.x = self.scr.rect.w * 24 // 30 + self.scr.rect.x
         if self.scr.rect.x < 0:
             self.scr.rect.x = 0
             self.move = False
             self.active = True
+
+    def move_right(self):
+        self.scr.rect.x += 50
+        self.gear_angle -= 10
+        self.gear_angle = self.gear_angle % 360
+        self.gear.image = pg.transform.rotate(self.orig_gear_image, self.gear_angle)
+        self.scheme.rect.x = self.scr.rect.w * 24 // 30 + self.scr.rect.x
+        if self.scr.rect.x > WIDTH:
+            self.scr.rect.x = WIDTH
+            self.move = False
+            self.active = False
 
 class Game():
     def __init__(self, videos=None, light_photos=None):
@@ -399,6 +412,8 @@ class Game():
                     self.camers.movement(event)
             if self.camers.move and not self.camers.active:
                 self.camers.move_left()
+            if self.camers.move and self.camers.active:
+                self.camers.move_right()
             keys = pg.key.get_pressed()
             if keys[pygame.K_SPACE]:
                 if not self.charge == 0:
@@ -560,7 +575,7 @@ class Game():
                 self.camers.gear.rect.x = 0
                 print(self.camers.gear.rect)
             else:
-                self.camers.gear.x = WIDTH
+                self.camers.gear.rect.x = WIDTH
 
     def arrange_buttons(self, room_id):
         self.buttons_group = pg.sprite.Group()
@@ -578,7 +593,7 @@ class Game():
         for frame in frames:
             self.screen.blit(frame, (0, 0))
             pg.display.flip()
-            self.clock.tick(FPS)
+            self.clock.tick(FPSVIDEOS)
 
     def get_all_videos(self):
         transitions = ['1_2', '2_1', '2_3', '3_2', '3_4', '3_9', '4_3', '4_5',
