@@ -1,4 +1,6 @@
 from importlib.resources import path
+from multiprocessing.spawn import old_main_modules
+from tracemalloc import start
 import pygame as pg
 import sys
 import os
@@ -309,13 +311,65 @@ class Battery():
         self.other.fon_sprite.image.blit(self.image, (self.x, self.y))
 
 
+class Camers():
+    def __init__(self, other):
+        self.other = other
+        self.gear = pg.sprite.Sprite(self.other.all_sprites)
+        self.gear.image = load_image('scheme.png')
+        self.gear.rect = self.gear.image.get_rect()
+        self.gear.rect.x = WIDTH
+        self.gear.rect.y = HEIGHT // 15
+        self.scr = pg.sprite.Sprite(self.other.all_sprites)
+        self.scr.image = pg.transform.scale(load_image('ugly_monsters\Max\scremer.png'), (WIDTH, HEIGHT))
+        self.scr.rect = self.scr.image.get_rect()
+        self.scr.rect.x = WIDTH
+        self.scr.rect.y = 0
+        self.scheme = pg.sprite.Sprite(self.other.all_sprites)
+        self.scheme.image = pg.transform.scale(load_image('scheme.png'),
+                                               (self.scr.rect.w * 2 // 3, HEIGHT * 2 // 3))
+        self.scheme.rect = self.scheme.image.get_rect()
+        self.scheme.rect.x = self.scr.rect.w // 3 + self.scr.rect.x
+        self.scheme.rect.y = self.scr.rect.h // 3 + self.scr.rect.y
+        self.active = False
+        self.move = False
+
+    def movement(self, event):
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_1:
+                self.switch_image("1")
+            if event.key == pg.K_2:
+                self.switch_image("2")
+            if event.key == pg.K_3:
+                self.switch_image("3")
+            if event.key == pg.K_4:
+                self.switch_image("4")
+            if event.key == pg.K_5:
+                self.switch_image("5")
+            if event.key == pg.K_6:
+                self.switch_image("6")
+            if event.key == pg.K_ESCAPE:
+                self.move = True
+
+    def switch_image(self, cum_id):
+        pass
+
+    def move_left(self):
+        self.scr.rect.x -= 50
+        self.gear.image = pg.transform.rotate(self.gear.image, 20)
+        self.scheme.rect.x = self.scr.rect.w * 24 // 30 + self.scr.rect.x
+        if self.scr.rect.x < 0:
+            self.scr.rect.x = 0
+            self.move = False
+            self.active = True
+
 class Game():
-    def __init__(self, videos=None):
+    def __init__(self, videos=None, light_photos=None):
         self.screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
         self.clock = pg.time.Clock()
         self.all_sprites = pg.sprite.Group()
         self.running = True
         self.video = videos
+        self.light_photos = light_photos
         self.flash_light_on = pg.mixer.Sound('data/sounds/flashlight_on.mp3')
         self.flash_light_off = pg.mixer.Sound('data/sounds/flashlight_off.mp3')
         self.charge = 100
@@ -324,9 +378,10 @@ class Game():
         self.load_info()
         self.map = self.get_map()
         self.load_images()
-        self.loads_light_photos()
         if not self.video:
             self.get_all_videos()
+        if not self.light_photos:
+            self.loads_light_photos()
         self.add_sprite()
         pg.mixer.music.load('data/sounds/Main_theme_4.mp3')
         pg.mixer.music.play(-1)
@@ -337,6 +392,13 @@ class Game():
             for event in pg.event.get():
                 if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     termit()
+                if event.type == pg.KEYDOWN and event.key == pg.K_TAB:
+                    if self.get_mode_camers() and not self.camers.move and not self.camers.active:
+                        self.camers.move = True
+                if self.camers.active:
+                    self.camers.movement(event)
+            if self.camers.move and not self.camers.active:
+                self.camers.move_left()
             keys = pg.key.get_pressed()
             if keys[pygame.K_SPACE]:
                 if not self.charge == 0:
@@ -441,6 +503,7 @@ class Game():
         self.max = Monster(40, 10, "Max", self)
         self.elc = Monster(30, 7, "Elc", self)
         self.battery = Battery(self)
+        self.camers = Camers(self)
 
     def monsters_update(self):
         self.max.update()
@@ -452,6 +515,10 @@ class Game():
 
     def get_map(self):
         return self.info["map"]
+
+    def get_mode_camers(self):
+        id = self.currect_room_id()
+        return self.map[id]["cam"]
 
     def load_images(self):
         self.room_images = {}
@@ -489,6 +556,11 @@ class Game():
             self.fon_sprite.image = self.current_image()
             self.fon_sprite.rect = self.fon_sprite.image.get_rect()
             self.arrange_buttons(room_id)
+            if self.get_mode_camers():
+                self.camers.gear.rect.x = 0
+                print(self.camers.gear.rect)
+            else:
+                self.camers.gear.x = WIDTH
 
     def arrange_buttons(self, room_id):
         self.buttons_group = pg.sprite.Group()
