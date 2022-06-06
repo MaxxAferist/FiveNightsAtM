@@ -1,0 +1,4315 @@
+﻿.MEConfig *,
+.MEConfig *::before,
+.MEConfig *::after {
+  box-sizing: border-box;
+}
+
+.MEConfig * {
+  scrollbar-width: none;
+}
+
+/**
+* Итоговый селектор не имеет веса, поэтому перекроет только браузерные стили
+*/
+
+@supports selector(A:where(B)) {
+  :where(.MEConfig) * {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/**
+* Без поддержки :where селектор без веса сгененерировать ресет под классом
+* без высокой специфичности не получится.
+* Универсальные селекторы менее специфичны, чем селекторы с тегами,
+* но если стили ресета подключатся после основных, то все равно отработают.
+* Поэтому выбираем более специфичные селекторы, но ограничиваем список элементов,
+* чтобы с меньшей вероятности задеть более частые элементы
+*/
+
+@supports not (selector(A:where(B))) {
+  .MEConfig p,
+  .MEConfig ul,
+  .MEConfig ol,
+  .MEConfig h1,
+  .MEConfig h2,
+  .MEConfig h3,
+  .MEConfig h4,
+  .MEConfig h5,
+  .MEConfig h6,
+  .MEConfig figure {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.MEConfig img {
+  max-width: 100%;
+  aspect-ratio: attr(width) / attr(height);
+}
+
+@supports selector(A:where(B)) {
+  :where(.MEConfig img[height]) {
+    height: auto;
+  }
+}
+
+@supports not (selector(A:where(B))) {
+  .MEConfig img[height] {
+    height: auto;
+  }
+}
+
+.MEConfig {
+  --fcZIndex: 1500;
+  --basefont: -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue',
+    Geneva, 'Noto Sans Armenian', 'Noto Sans Bengali', 'Noto Sans Cherokee',
+    'Noto Sans Devanagari', 'Noto Sans Ethiopic', 'Noto Sans Georgian',
+    'Noto Sans Hebrew', 'Noto Sans Kannada', 'Noto Sans Khmer', 'Noto Sans Lao',
+    'Noto Sans Osmanya', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Noto Sans Thai',
+    sans-serif, Arial, Tahoma, verdana;
+  --font: var(--palette-vk-font, var(--basefont));
+  -webkit-font-smoothing: subpixel-antialiased;
+  font-family: var(--font);
+}
+
+.MEConfig *::-webkit-scrollbar {
+  display: none;
+}
+
+.MEConfig .simplebar-scrollbar::before {
+  background-color: var(--icon_tertiary);
+  width: 6px;
+  border-radius: 3px;
+}
+
+.MEApp {
+  --historyPaddingRight: 30px;
+  --historyPaddingBottom: 40px;
+  --historyPaddingLeft: 20px;
+  --messageFontSize: 16px;
+  --messageLineHeight: 20px;
+  --messageMaxWidth: 75%;
+  --messageVerticalIndent: 8px;
+  --messageHorizontalIndent: 12px;
+  --messageBorderRadius: 16px;
+  --messageAttachmentIndent: 5px;
+  --messageKeyboardIndent: 8px;
+  --messageDateFontSize: 11px;
+  --messageDateLineHeight: 12px;
+  --messageDateMarginLeft: 8px;
+  --attachArticleBorderRadius: 6px;
+  --attachArticleWidth: min(100%, 500px);
+}
+
+.FCApp,
+.SAKApp {
+  --historyPadding: 0 16px 12px 8px;
+  --historyPaddingRight: 16px;
+  --historyPaddingBottom: 30px;
+  --historyPaddingLeft: 8px;
+  --messageFontSize: 13px;
+  --messageLineHeight: 16px;
+  --messageMaxWidth: 260px;
+  --messageVerticalIndent: 7px;
+  --messageHorizontalIndent: 10px;
+  --messageBorderRadius: 14px;
+  --messageAttachmentIndent: 4px;
+  --messageKeyboardIndent: 8px;
+  --messageDateFontSize: 9px;
+  --messageDateLineHeight: 10px;
+  --messageDateMarginLeft: 3px;
+  --attachArticleBorderRadius: 6px;
+  --attachArticleWidth: min(100%, 500px);
+}
+
+[data-simplebar]{position:relative;flex-direction:column;flex-wrap:wrap;justify-content:flex-start;align-content:flex-start;align-items:flex-start}.simplebar-wrapper{overflow:hidden;width:inherit;height:inherit;max-width:inherit;max-height:inherit}.simplebar-mask{direction:inherit;position:absolute;overflow:hidden;padding:0;margin:0;left:0;top:0;bottom:0;right:0;width:auto!important;height:auto!important;z-index:0}.simplebar-offset{direction:inherit!important;box-sizing:inherit!important;resize:none!important;position:absolute;top:0;left:0;bottom:0;right:0;padding:0;margin:0;-webkit-overflow-scrolling:touch}.simplebar-content-wrapper{direction:inherit;box-sizing:border-box!important;position:relative;display:block;height:100%;width:auto;max-width:100%;max-height:100%;scrollbar-width:none;-ms-overflow-style:none}.simplebar-content-wrapper::-webkit-scrollbar,.simplebar-hide-scrollbar::-webkit-scrollbar{width:0;height:0}.simplebar-content:after,.simplebar-content:before{content:' ';display:table}.simplebar-placeholder{max-height:100%;max-width:100%;width:100%;pointer-events:none}.simplebar-height-auto-observer-wrapper{box-sizing:inherit!important;height:100%;width:100%;max-width:1px;position:relative;float:left;max-height:1px;overflow:hidden;z-index:-1;padding:0;margin:0;pointer-events:none;flex-grow:inherit;flex-shrink:0;flex-basis:0}.simplebar-height-auto-observer{box-sizing:inherit;display:block;opacity:0;position:absolute;top:0;left:0;height:1000%;width:1000%;min-height:1px;min-width:1px;overflow:hidden;pointer-events:none;z-index:-1}.simplebar-track{z-index:1;position:absolute;right:0;bottom:0;pointer-events:none;overflow:hidden}[data-simplebar].simplebar-dragging .simplebar-content{pointer-events:none;user-select:none;-webkit-user-select:none}[data-simplebar].simplebar-dragging .simplebar-track{pointer-events:all}.simplebar-scrollbar{position:absolute;left:0;right:0;min-height:10px}.simplebar-scrollbar:before{position:absolute;content:'';background:#000;border-radius:7px;left:2px;right:2px;opacity:0;transition:opacity .2s .5s linear}.simplebar-hover .simplebar-scrollbar:before,.simplebar-mouse-entered .simplebar-scrollbar:before,.simplebar-scrolling .simplebar-scrollbar:before{opacity:.5;transition-delay:0s;transition-duration:0s}.simplebar-scrollbar.simplebar-visible:before{opacity:.5;transition-delay:0s;transition-duration:0s}.simplebar-track.simplebar-vertical{top:0;width:11px}.simplebar-scrollbar:before{top:2px;bottom:2px;left:2px;right:2px}.simplebar-track.simplebar-horizontal{left:0;height:11px}.simplebar-track.simplebar-horizontal .simplebar-scrollbar{right:auto;left:0;top:0;bottom:0;min-height:0;min-width:10px;width:auto}[data-simplebar-direction=rtl] .simplebar-track.simplebar-vertical{right:auto;left:0}.simplebar-dummy-scrollbar-size{direction:rtl;position:fixed;opacity:0;visibility:hidden;height:500px;width:500px;overflow-y:hidden;overflow-x:scroll;-ms-overflow-style:scrollbar!important}.simplebar-dummy-scrollbar-size>div{width:200%;height:200%;margin:10px 0}.simplebar-hide-scrollbar{position:fixed;left:0;visibility:hidden;overflow-y:scroll;scrollbar-width:none;-ms-overflow-style:none}
+
+.Symbols {
+  display: none;
+}
+
+.OptimizedSpinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.METooltip {
+  --tailSize: 5px;
+  --tooltip_dark_background: rgba(0, 0, 0, 0.72); /* @TODO: correct token */
+  --tooltip_dark_border: rgba(0, 0, 0, 0.72); /* @TODO: correct token */
+  --tooltip_light_background: #fff; /* @TODO: correct token */
+  --tooltip_light_border: #c5d0db; /* @TODO: correct token */
+
+  position: relative;
+  animation: fadeIn 0.3s ease;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font: 12.5px/18px var(--font);
+  height: min-content;
+  white-space: nowrap;
+  pointer-events: none;
+  max-width: none;
+  color: #fff; /* @TODO: correct token */
+  background: var(--tooltip_dark_background);
+}
+
+.METooltip--removed {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/**
+ * Задаем отступы самого тултипа от Поппера для хвостика
+ * Например, если позиционируемся сверху (над элементом),
+ * то снизу должен быть отступ для хвостика
+ */
+
+[data-position='top'] > .METooltip {
+  margin-bottom: var(--tailSize);
+}
+
+[data-position='right'] > .METooltip {
+  margin-left: var(--tailSize);
+}
+
+[data-position='bottom'] > .METooltip {
+  margin-top: var(--tailSize);
+}
+
+[data-position='left'] > .METooltip {
+  margin-right: var(--tailSize);
+}
+
+/**
+ * Хвостик тултипа
+ */
+
+.METooltip::after {
+  position: absolute;
+  border: var(--tailSize) solid transparent;
+  content: '';
+}
+
+/**
+ * Отображаем хвостик, перекрашивая один из бордеров
+ * для появления видимого треугольника
+ */
+
+[data-position='top'] > .METooltip::after {
+  top: 100%;
+  border-top-color: var(--tooltip_dark_background);
+}
+
+[data-position='right'] > .METooltip::after {
+  top: calc(50% - var(--tailSize));
+  right: 100%;
+  border-right-color: var(--tooltip_dark_background);
+}
+
+[data-position='bottom'] > .METooltip::after {
+  bottom: 100%;
+  border-bottom-color: var(--tooltip_dark_background);
+}
+
+[data-position='left'] > .METooltip::after {
+  top: calc(50% - var(--tailSize));
+  left: 100%;
+  border-left-color: var(--tooltip_dark_background);
+}
+
+/**
+ * Для режима, когда тултип показывается сверху или снизу,
+ * выравниваем тултип по горизонтали (когда он находится на верхней или нижней стороне)
+ */
+
+[data-position='top'][data-align='left'] > .METooltip::after,
+[data-position='bottom'][data-align='left'] > .METooltip::after {
+  left: 5px;
+}
+
+[data-position='top'][data-align='center'] > .METooltip::after,
+[data-position='bottom'][data-align='center'] > .METooltip::after {
+  left: calc(50% - var(--tailSize));
+}
+
+[data-position='top'][data-align='right'] > .METooltip::after,
+[data-position='bottom'][data-align='right'] > .METooltip::after {
+  right: 5px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.NoResults {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  font: 13px/16px var(--font);
+  flex: 1 0 auto;
+}
+
+.NoResults__text {
+  padding: 16px 0 0;
+  color: var(--content_placeholder_text);
+}
+
+.NoResults__icon {
+  color: var(--content_placeholder_icon);
+}
+
+.MEPopper {
+  display: flex;
+  z-index: calc(var(--fcZIndex, 1) + 1);
+}
+
+.MEPopper--top {
+  align-items: flex-end;
+}
+
+.MEPopper--right {
+  justify-content: left;
+  align-items: center;
+}
+
+.MEPopper--bottom {
+  align-items: flex-start;
+}
+
+.MEPopper--left {
+  justify-content: left;
+  align-items: center;
+  direction: rtl;
+}
+
+.MEPopper--alignLeft {
+  justify-content: left;
+}
+
+.MEPopper--alignCenter {
+  justify-content: center;
+}
+
+.MEPopper--alignRight {
+  direction: rtl;
+  justify-content: right;
+}
+
+.MEPopper > * {
+  direction: ltr;
+}
+
+.AvatarFavorites {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(91.54deg, #70b2ff, #5c9ce6);
+  border-radius: 50%;
+  color: #fff; /* @TODO: correct token */
+}
+
+.MEAvatar {
+  position: relative;
+  text-align: center;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.MEAvatar__imgWrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  z-index: 0; /* stack for activity indicator */
+}
+
+.MEAvatar__img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.MEAvatar__activityIndicator,
+.MEAvatar__imgWrapper::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+}
+
+.MEAvatar__activityIndicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff; /* @TODO: correct token */
+  z-index: 1; /* pops indicator on top of underlay */
+}
+
+/* animatable underlay for indicator */
+
+.MEAvatar__imgWrapper::after {
+  content: '';
+  background: rgba(0, 0, 0, 0.4); /* @TODO: correct token */
+  opacity: 0;
+  transition: opacity 0.14s ease;
+}
+
+.MEAvatar--withActivity .MEAvatar__imgWrapper::after {
+  opacity: 1;
+}
+
+.MEAvatar__svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  visibility: visible;
+}
+
+.MEAvatar__shadow {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.08); /* @TODO: correct token */
+  stroke-width: 2px;
+}
+
+.MEAvatar__me {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 10px;
+  height: 10px;
+  fill: #0077ff; /* @TODO: correct token */
+}
+
+.MEAvatar--size-24 .MEAvatar__me,
+.MEAvatar--size-32 .MEAvatar__me {
+  right: 0;
+  bottom: 0;
+}
+
+.MEAvatar__mobile {
+  color: #4bb34b; /* @TODO: correct token -- designers */
+  position: absolute;
+  right: 3px;
+  bottom: 1px;
+}
+
+.MEAvatar--size-40 .MEAvatar__mobile {
+  right: 2px;
+}
+
+.MEAvatar--size-32 .MEAvatar__mobile {
+  right: 1px;
+  bottom: -1px;
+}
+
+.MEAvatar--size-24 .MEAvatar__mobile {
+  right: 0;
+  bottom: -1px;
+}
+
+.MEAvatar__online {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  background-color: #4bb34b; /* @TODO: correct token -- designers */
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.MEAvatar--size-32 .MEAvatar__online {
+  right: 1px;
+  bottom: 1px;
+}
+
+.MEAvatar--size-24 .MEAvatar__online {
+  right: 0;
+  bottom: 0;
+}
+
+.MEAvatar__call {
+  position: absolute;
+  top: 1px;
+  right: -3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #50c750, #32b332);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.MEAvatar--emptyCall .MEAvatar__call {
+  background: linear-gradient(135deg, #b1b6bd, #99a2ad);
+}
+
+.MEAvatar--size-40 .MEAvatar__call,
+.MEAvatar--size-32 .MEAvatar__call {
+  top: 0;
+}
+
+.MEAvatar__callIcon {
+  width: 10px;
+  height: 10px;
+  fill: #fff; /* @TODO: correct token */
+}
+
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance: none) {
+    .MEAvatar {
+      transform: translate3d(0, 0, 0); /* Хак для сафари */
+    }
+  }
+}
+
+.AvatarNoPhoto {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff; /* @TODO: correct token */
+  border-radius: 50%;
+  font: 600 18px/16px var(--font);
+}
+
+.AvatarNoPhoto--color-0 {
+  background: radial-gradient(circle at center 0px, #ff6952, #e6404b);
+}
+
+.AvatarNoPhoto--color-1 {
+  background: radial-gradient(circle at center 0px, #ffb829, #fa7f14);
+}
+
+.AvatarNoPhoto--color-2 {
+  background: radial-gradient(circle at center 0px, #ffdc50, #f2b40b);
+}
+
+.AvatarNoPhoto--color-3 {
+  background: radial-gradient(circle at center 0px, #78e070, #46b864);
+}
+
+.AvatarNoPhoto--color-4 {
+  background: radial-gradient(circle at center 0px, #78f1fa, #46bddb);
+}
+
+.AvatarNoPhoto--color-5 {
+  background: radial-gradient(circle at center 0px, #e664fa, #a73ddb);
+}
+
+.AvatarNoPhoto--color-contact {
+  background: radial-gradient(circle at center 0px, #66ccff, #3f8ae0);
+}
+
+.AvatarNoPhoto--color-ext {
+  background: radial-gradient(circle at center 0px, #bac2cc, #8c97a3);
+}
+
+.AvatarNoPhoto--size-24 {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.AvatarNoPhoto--size-32 {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.AvatarNoPhoto--size-34 {
+  width: 34px;
+  height: 34px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.AvatarNoPhoto--size-40 {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+}
+
+.AvatarNoPhoto--size-44 {
+  width: 44px;
+  height: 44px;
+  font-size: 15px;
+}
+
+.AvatarNoPhoto--size-46 {
+  width: 46px;
+  height: 46px;
+  font-size: 16px;
+}
+
+.AvatarNoPhoto--size-48 {
+  width: 48px;
+  height: 48px;
+  font-size: 16px;
+}
+
+.AvatarNoPhoto--size-50 {
+  width: 50px;
+  height: 50px;
+  font-size: 17px;
+}
+
+.AvatarNoPhoto--size-56 {
+  width: 56px;
+  height: 56px;
+  font-size: 17px;
+}
+
+.AvatarNoPhoto--size-64 {
+  width: 64px;
+  height: 64px;
+  font-size: 19px;
+}
+
+.AvatarNoPhoto--size-72 {
+  width: 72px;
+  height: 72px;
+  font-size: 26px;
+}
+
+.AvatarNoPhoto--size-80 {
+  width: 80px;
+  height: 80px;
+  font-size: 28px;
+}
+
+.AvatarNoPhoto--size-100 {
+  width: 100px;
+  height: 100px;
+  font-size: 34px;
+}
+
+.AvatarNoPhoto--size-160 {
+  width: 160px;
+  height: 160px;
+  font-size: 54px;
+}
+
+.AvatarNoPhoto--size-200 {
+  width: 200px;
+  height: 200px;
+  font-size: 67px;
+}
+
+.TypingIndicator {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.TypingIndicator--text .TypingIndicator__particle,
+.TypingIndicator--text::before,
+.TypingIndicator--text::after {
+  width: 4px;
+  height: 4px;
+  margin-right: 3px;
+  background: currentColor;
+  border-radius: 3px;
+  backface-visibility: hidden;
+  animation: TypingAnimationText 1s linear infinite;
+}
+
+.TypingIndicator--text::before,
+.TypingIndicator--text::after {
+  content: '';
+  display: block;
+}
+
+.TypingIndicator.TypingIndicator--text::before {
+  animation-delay: calc(-1 / 6 * 1s);
+}
+
+.TypingIndicator.TypingIndicator--text::after {
+  animation-delay: calc(1 / 6 * 1s);
+}
+
+@keyframes TypingAnimationText {
+  0%,
+  66.7%,
+  100% {
+    opacity: 0.4;
+  }
+  33.3% {
+    opacity: 1;
+  }
+}
+
+.TypingIndicator--voice .TypingIndicator__particle,
+.TypingIndicator--voice::before,
+.TypingIndicator--voice::after {
+  width: 3px;
+  height: 12px;
+  margin-right: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: scaleY(0.45);
+  animation: TypingAnimationVoice 1s linear infinite;
+}
+
+.TypingIndicator--voice::before,
+.TypingIndicator--voice::after {
+  content: '';
+  display: block;
+}
+
+.TypingIndicator::before {
+  animation-delay: calc(-1 / 6 * 1s);
+}
+
+.TypingIndicator::after {
+  animation-delay: calc(1 / 6 * 1s);
+}
+
+@keyframes TypingAnimationVoice {
+  0%,
+  66.7%,
+  100% {
+    opacity: 0.4;
+    transform: scaleY(0.67);
+  }
+  33.3% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+.TypingIndicator--file {
+}
+
+.TypingIndicator--file .TypingIndicator__particle {
+  width: 20px;
+  height: 6px;
+  border-radius: 2px;
+  overflow: hidden;
+  animation: none;
+  position: relative;
+  background: none;
+}
+
+.TypingIndicator--file .TypingIndicator__particle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: currentColor;
+  opacity: 0.3;
+}
+
+.TypingIndicator--file .TypingIndicator__particle::after {
+  content: '';
+  display: block;
+  width: 50%;
+  height: 100%;
+  border-radius: 2px;
+  background: currentColor;
+  animation: TypingAnimationFile 1s linear infinite;
+}
+
+@keyframes TypingAnimationFile {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.UnreadCounter {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  font: 500 13px/20px var(--font);
+  text-align: center;
+  background: var(--counter_primary_background);
+  color: var(--counter_primary_text);
+}
+
+/* Слегка увеличил специфичность, чтобы проповые className не перезаписывали мьют */
+
+.UnreadCounter.UnreadCounter--muted {
+  background: var(--counter_secondary_background);
+  color: var(--counter_secondary_text);
+}
+
+.UnreadCounter--size-18 {
+  min-width: 18px;
+  height: 18px;
+  /* @TODO В макете 12px + нет семиболда, поправить при переходе на VK Sans */
+  font: 500 12px/18px var(--font);
+  padding: 0 4px;
+  border-radius: 9px;
+}
+
+.ConvoTitle {
+  display: flex;
+  align-items: center;
+  color: var(--text_primary);
+  font-family: var(--font);
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  flex: 1 1 auto;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.ConvoTitle__title {
+  flex: 0 1 auto;
+  overflow: hidden;
+  /* @TODO: заменить на fade(), когда будет поддержка */
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ConvoTitle__icon {
+  margin-left: 5px;
+}
+
+.ConvoTitle__verifiedIcon {
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
+.ConvoTitle__mutedIcon {
+  flex: 0 0 auto;
+  color: var(--icon_tertiary);
+}
+
+.EmptyConvoList {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 0 auto;
+  padding: 0 24px;
+  font: 13px/16px var(--font);
+  color: var(--text_secondary);
+  text-align: center;
+  letter-spacing: -0.078px;
+}
+
+.EmptyConvoList__icon {
+  color: var(--placeholder_icon_foreground_primary);
+  margin-bottom: 12px;
+}
+
+.EmptyConvoList__link {
+  color: var(--text_link);
+  margin-top: 8px;
+  background: none;
+  outline: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.EmptyConvoList__link:hover {
+  text-decoration: underline;
+}
+
+.SearchResult {
+  display: grid;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border: 0;
+  width: 100%;
+  background: transparent;
+  text-align: left;
+  font: 500 14px/22px var(--font);
+  max-width: 100%;
+  overflow: hidden;
+  transition: background-color 0.2s ease;
+  grid-template-columns: auto 1fr auto;
+}
+
+.SearchResult:hover,
+.SearchResult[aria-selected='true'] {
+  background: var(--content_tint_background);
+  outline: none;
+}
+
+.SearchResult:focus {
+  outline: none;
+}
+
+.SearchResult__icons {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ActionsMenu {
+  contain: content;
+  display: flex;
+  position: relative;
+  flex-flow: column;
+  z-index: 1;
+  padding: 8px 0;
+  background-color: var(--background_content);
+  border-radius: 12px;
+  min-width: 150px;
+  max-width: 250px;
+  border: 0.5px solid var(--background_highlighted);
+  box-shadow: 0px 0px 2px var(--background_highlighted),
+    0px 8px 24px var(--background_highlighted);
+}
+
+.ActionsMenu__action {
+  isolation: isolate;
+  position: relative;
+  display: inline-flex;
+  width: auto;
+  height: 36px;
+  padding: 14px 20px 14px 14px;
+  align-items: center;
+  color: var(--control_foreground);
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.ActionsMenu__action::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0;
+  z-index: -1;
+  background-color: var(--background_hover);
+  transition: opacity 160ms ease;
+}
+
+.ActionsMenu__action:hover::before {
+  opacity: 1;
+}
+
+.ActionsMenu__action:focus {
+  color: var(--text_secondary);
+  outline: none;
+}
+
+.ActionsMenu__action:focus::before {
+  background-color: var(--field_background);
+  opacity: 1;
+}
+
+.ActionsMenu__separator {
+  border-top: 1px solid var(--separator_common);
+  margin: 8px 9px;
+}
+
+.ActionsMenu__actionIcon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  color: var(--icon_outline_secondary);
+}
+
+.ActionsMenu__actionText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text_primary);
+}
+
+.DropdownReforged {
+  contain: content;
+}
+
+.DropdownReforged__trigger {
+  display: inline-block;
+}
+
+.DropdownReforged__contentWrapper {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  padding-top: 6px;
+  transition: opacity 0.14s linear 0.1s, transform 0.14s linear 0.1s;
+}
+
+.DropdownReforged__contentWrapper--appear {
+  pointer-events: none;
+  transform: translateY(5px);
+  opacity: 0;
+}
+
+.DropdownReforged__contentWrapper--appear-active {
+  opacity: 1;
+  transform: none;
+}
+
+.DropdownReforged__contentWrapper--exit {
+  opacity: 1;
+  transform: none;
+}
+
+.DropdownReforged__contentWrapper--exit-active {
+  transform: translateY(5px);
+  opacity: 0;
+  transition: opacity 0.1s linear 0.1s, transform 0.1s linear 0.1s;
+}
+
+.MessagePreview {
+  padding-right: 0.5ch; /* Оставляем небольшой запас для того, чтобы эмоджи не обрезались */
+}
+
+.MessagePreview__attach {
+  color: var(--text_link);
+}
+
+mark.highlighted {
+  color: unset;
+  background-color: var(--im_bubble_outgoing_highlighted);
+}
+
+.ConvoHistory {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.ConvoHistory__wrapper {
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  height: 100%;
+  overscroll-behavior: none;
+  overflow-x: hidden;
+}
+
+.ConvoHistory__wrapper .simplebar-content {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.ConvoHistory__dateStack {
+  position: relative;
+  width: 100%;
+}
+
+.ConvoHistory__content {
+  flex: 1 1 auto;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+}
+
+.ConvoHistory__contentHeader {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  overflow: visible;
+}
+
+.ConvoHistory__contentFooter {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+.ConvoHistory__flow {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding: 0 var(--historyPaddingRight) var(--historyPaddingBottom)
+    var(--historyPaddingLeft);
+}
+
+.ConvoHistory__frameWrapper {
+  contain: content;
+  width: 100%;
+}
+
+.ConvoHistory__messageWrapper {
+  position: relative;
+  contain: content;
+  padding-top: calc(var(--messageVerticalIndent) * 0.5);
+  transition: opacity 200ms ease;
+  max-width: 100%;
+}
+
+.ConvoHistory__messageWrapper--out {
+  justify-content: flex-end;
+}
+
+.ConvoHistory__messageWrapper--fullWidth {
+  width: 100%;
+}
+
+.ConvoHistory__messageWrapper:last-child {
+  padding-bottom: calc(var(--messageVerticalIndent) * 0.5);
+}
+
+.ConvoHistory__flowStack--searchable:hover {
+  background-color: var(--im_bubble_incoming);
+}
+
+.ConvoHistory__messageWrapper--cached {
+  contain: layout style;
+}
+
+.ConvoHistory__messageActions {
+  position: absolute;
+  bottom: 5px;
+  border-radius: 14px;
+  box-shadow: 0 0 2px var(--background_highlighted),
+    0 8px 24px var(--background_highlighted);
+  border: 0.5px solid var(--background_highlighted);
+  transition: opacity 180ms ease, box-shadow 180ms ease;
+}
+
+.ConvoHistory__messageWrapper:last-child .ConvoHistory__messageActions {
+  bottom: 8px;
+}
+
+.ConvoHistory__messageActions--compact {
+  bottom: 1.5px;
+}
+
+.ConvoHistory__messageWrapper:last-child
+  .ConvoHistory__messageActions--compact {
+  bottom: 5px;
+}
+
+.ConvoHistory__messageActions--inMessage {
+  right: -22px;
+}
+
+.ConvoHistory__messageActions--outMessage {
+  left: -22px;
+}
+
+.ConvoHistory__messageActions--opened {
+  opacity: 1;
+}
+
+.ConvoHistory__messageActions--closed {
+  opacity: 0;
+}
+
+.ConvoHistory__messageActionsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  outline: none;
+  border: none;
+  background: var(--background_content);
+  cursor: pointer;
+  color: var(--icon_outline_secondary);
+}
+
+.ConvoHistory__messageActions:hover,
+.ConvoMessage:hover + .ConvoHistory__messageActions,
+.ConvoHistory__messageActions:focus,
+.ConvoMessage:focus + .ConvoHistory__messageActions {
+  opacity: 1;
+}
+
+.ConvoHistory__messageWrapper--highlighted {
+  position: relative;
+  opacity: 1;
+}
+
+.ConvoHistory__messageWrapper--highlighted .ConvoMessage {
+  --messageHighlightFromColor: var(--im_bubble_incoming);
+  --messageHighlightToColor: var(--im_bubble_incoming_highlighted);
+
+  animation: messageHighlight 3000ms ease 1 50ms;
+}
+
+.ConvoHistory__messageWrapper--highlighted .ConvoMessage.ConvoMessage--out {
+  --messageHighlightFromColor: var(--im_bubble_outgoing);
+  --messageHighlightToColor: var(--im_bubble_outgoing_highlighted);
+}
+
+.ConvoHistory__messageWrapper--highlighted
+  .ConvoMessage.ConvoMessage--expiring {
+  --messageHighlightFromColor: var(--im_bubble_incoming_expiring);
+  --messageHighlightToColor: var(--im_bubble_incoming_expiring_highlighted);
+}
+
+.ConvoHistory__messageWrapper--highlighted
+  .ConvoMessage.ConvoMessage--out.ConvoMessage--expiring {
+  --messageHighlightFromColor: var(--im_bubble_outgoing_expiring);
+  --messageHighlightToColor: var(--im_bubble_outgoing_expiring_highlighted);
+}
+
+.ConvoHistory__messageWrapper--highlighted:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  opacity: 0;
+  background: var(--background_highlighted);
+  animation: messageHighlightBackground 3000ms ease 1;
+}
+
+.ConvoHistory__separator {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  padding: 12px 0 12px 4px;
+  color: var(--text_tertiary);
+  font-size: 12px;
+  width: 100%;
+}
+
+.ConvoHistory__separator {
+  box-sizing: border-box;
+}
+
+.ConvoHistory__separator::before,
+.ConvoHistory__separator::after {
+  flex: 1 1 0;
+  display: block;
+  content: '';
+  height: 1px;
+}
+
+.ConvoHistory__separator--unread {
+  opacity: 1;
+}
+
+.ConvoHistory__separator--unread::before {
+  background: var(--separator_alternate);
+}
+
+.ConvoHistory__separator--unread::after {
+  background: var(--separator_alternate);
+}
+
+.ConvoHistory__separator--date {
+  position: sticky;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  top: 0;
+  padding-top: calc(var(--messageVerticalIndent) * 0.875);
+  padding-bottom: calc(var(--messageVerticalIndent) * 0.875);
+}
+
+.ConvoHistory__separatorDateWrapper {
+  position: relative;
+  padding: 4px 12px;
+  color: var(--text_tertiary);
+  font-size: 12px;
+  border-radius: 16px;
+  opacity: 1;
+  border: 1px solid transparent;
+  transition: box-shadow 200ms ease-out, opacity 200ms ease-out,
+    border-color 200ms ease-out;
+}
+
+.ConvoHistory__separatorDateWrapper::before {
+  content: '';
+  z-index: -1;
+  border-radius: 16px;
+  width: 100%;
+  height: 100%;
+  background: var(--background_content);
+  opacity: 0.9;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ConvoHistory__separator--dateActive .ConvoHistory__separatorDateWrapper {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-color: var(--separator_common);
+}
+
+.ConvoHistory__separator--dateActive[hidden]
+  .ConvoHistory__separatorDateWrapper {
+  opacity: 0;
+  box-shadow: none;
+}
+
+.ConvoHistory__spinnerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 32px;
+  height: 100%;
+  width: 100%;
+  background: var(--background_content);
+}
+
+.ConvoHistory__spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: opacity 260ms ease;
+}
+
+.ConvoHistory__spinner--hidden {
+  opacity: 0;
+}
+
+/**
+  Стили для дебаг-компонента
+  @TODO: удалить после оптимизации
+ */
+
+.ConvoHistory__debug {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 1;
+  opacity: 0.3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ConvoHistory__debugItem {
+  position: absolute;
+  width: 100%;
+  background: #1b7a1b;
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ConvoHistory__debugItem::before {
+  content: '';
+  display: block;
+  position: absolute;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0a0a0a;
+}
+
+.ConvoHistory__debugItem--focused {
+  background: #f2b40b;
+}
+
+@keyframes messageHighlightBackground {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes messageHighlight {
+  0% {
+    background: var(--messageHighlightFromColor);
+  }
+  10% {
+    background: var(--messageHighlightToColor);
+  }
+  90% {
+    background: var(--messageHighlightToColor);
+  }
+  100% {
+    background: var(--messageHighlightFromColor);
+  }
+}
+
+.ConvoStack {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+}
+
+.ConvoStack--out {
+  justify-content: flex-end;
+}
+
+.ConvoStack__author {
+  flex: 0 0 auto;
+  padding: 2px 0 calc(var(--messageVerticalIndent) * 0.5);
+  margin-right: 6px;
+  position: sticky;
+  bottom: 0;
+}
+
+.ConvoStack__content {
+  flex: 1 1 auto;
+  display: flex;
+  max-width: var(--messageMaxWidth);
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ConvoStack--centered .ConvoStack__content {
+  flex: 1 1 auto;
+  max-width: none;
+}
+
+.ConvoStack--out .ConvoStack__content {
+  align-items: flex-end;
+}
+
+.MessageActionsMenu {
+  contain: content;
+  width: 152px;
+}
+
+.ConvoHistoryPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0 10px;
+  padding: 20px 10px;
+  color: var(--text_placeholder);
+}
+
+.ConvoHistoryPlaceholder__description {
+  max-width: 200px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.ConvoHistoryPlaceholderUserInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ConvoHistoryPlaceholderUserInfo__photoWrap {
+  margin-bottom: 11px;
+}
+
+.ConvoHistoryPlaceholderUserInfo__savedAs {
+  font-size: 15px;
+  color: var(--text_tertiary);
+  margin-bottom: 15px;
+  font-weight: 300;
+}
+
+.ConvoHistoryPlaceholderUserInfo__icon {
+  color: var(--content_placeholder_icon);
+  margin: 0 0 19px;
+}
+
+.ConvoHistoryPlaceholderUserInfo__photo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+}
+
+.ConvoHistoryPlaceholderUserInfo__name {
+  font-size: 20px;
+  line-height: 24px;
+  margin-bottom: 9px;
+  text-align: center;
+}
+
+.ConvoHistoryPlaceholderUserInfo__description {
+  font-size: 16px;
+  color: var(--text_subhead);
+  font-weight: 300;
+  line-height: 23px;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.ConvoHistoryPlaceholderUserInfo__additionalInfo {
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+  font: 13px/16px var(--font);
+  color: var(--text_secondary);
+}
+
+.ConvoHistoryPlaceholderUserInfo__mutualFriends {
+  margin-bottom: 28px;
+}
+
+.ConvoHistoryPlaceholderUserInfo__mutualFriends .vkuiUsersStack__text {
+  color: var(--text_secondary);
+  font: 13px/16px var(--font);
+}
+
+.ConvoHistoryPlaceholderUserInfo--s
+  .ConvoHistoryPlaceholderUserInfo__photoWrap {
+  margin-bottom: 12px;
+}
+
+.ConvoHistoryPlaceholderUserInfo--s .ConvoHistoryPlaceholderUserInfo__name {
+  font-size: 16px;
+  line-height: 22px;
+  margin-bottom: 8px;
+}
+
+.ConvoHistoryPlaceholderUserInfo--s .ConvoHistoryPlaceholderUserInfo__savedAs {
+  font: 13px/16px var(--font);
+  margin-bottom: 10px;
+  margin-top: -7px;
+}
+
+.ConvoHistoryPlaceholderUserInfo--s
+  .ConvoHistoryPlaceholderUserInfo__description {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.ConvoHistoryPlaceholderUserInfo--s
+  .ConvoHistoryPlaceholderUserInfo__additionalInfo {
+  margin-bottom: 0;
+}
+
+.ConvoHistoryPlaceholderUserInfo--s
+  .ConvoHistoryPlaceholderUserInfo__mutualFriends {
+  margin-bottom: 0;
+  margin-top: 8px;
+}
+
+.AvatarSimple {
+  position: relative;
+  text-align: center;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+}
+
+.AvatarSimple--size-24 {
+  width: 24px;
+  height: 24px;
+}
+
+.AvatarSimple--size-32 {
+  width: 32px;
+  height: 32px;
+}
+
+.AvatarSimple--size-40 {
+  width: 40px;
+  height: 40px;
+}
+
+.AvatarSimple--size-44 {
+  width: 44px;
+  height: 44px;
+}
+
+.AvatarSimple--size-46 {
+  width: 46px;
+  height: 46px;
+}
+
+.AvatarSimple--size-64 {
+  width: 64px;
+  height: 64px;
+}
+
+.AvatarSimple--size-80 {
+  width: 80px;
+  height: 80px;
+}
+
+.AvatarSimple__img {
+  width: 100%;
+  height: auto;
+}
+
+.ConvoHistoryPlaceholderActions {
+  display: grid;
+  grid-gap: 10px;
+  grid-auto-flow: column;
+  margin-top: 16px;
+}
+
+.ConvoHistoryPlaceholderActions__button:hover {
+  text-decoration: none;
+}
+
+.ConvoMessage {
+  position: relative;
+  box-sizing: border-box;
+  width: fit-content;
+  max-width: 100%;
+  background: var(--im_bubble_incoming);
+  border-radius: var(--messageBorderRadius);
+  padding: var(--messageVerticalIndent) var(--messageHorizontalIndent);
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  color: var(--text_primary);
+}
+
+.ConvoMessage::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px var(--background_content);
+  z-index: 0;
+  transform: scale(0);
+  transition: transform 200ms ease;
+}
+
+.ConvoMessage--out {
+  background: var(--im_bubble_outgoing);
+}
+
+.ConvoMessage--expiring {
+  background: var(--im_bubble_incoming_expiring);
+}
+
+.ConvoMessage--expiring.ConvoMessage--out {
+  background: var(--im_bubble_outgoing_expiring);
+}
+
+.ConvoMessage--noBackground {
+  background: transparent;
+  padding: 0;
+}
+
+.ConvoMessage--withGift {
+  max-width: 224px;
+  background: var(--im_bubble_gift_background);
+  color: var(--im_bubble_gift_text);
+  text-align: center;
+}
+
+.ConvoMessage--withArticle {
+  width: var(--attachArticleWidth);
+}
+
+.ConvoMessage__statusIcon {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--background_content);
+  box-shadow: 0 0 0 1px var(--background_content);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/**
+ * Часики
+ */
+
+.ConvoMessage__statusIcon--sending {
+  color: var(--icon_secondary);
+}
+
+/**
+ * Ошибка
+ */
+
+.ConvoMessage__statusIcon--failed {
+  color: var(--destructive);
+}
+
+/**
+ * Отметка непрочитанности
+ */
+
+.ConvoMessage--unread::after {
+  transform: scale(1);
+}
+
+.ConvoMessage--sending.ConvoMessage--unread::after {
+  display: none;
+}
+
+/**
+ * Автор сообщения
+ */
+
+.ConvoMessage__author {
+  margin: 0 0 2px;
+}
+
+.ConvoMessage__authorLink {
+  color: var(--text_link);
+  font: 500 0.925em / calc(0.875 * var(--messageLineHeight)) var(--font);
+  text-decoration: none;
+}
+
+/**
+ * Иконка исчезающего сообщения
+ */
+
+.ConvoMessage__bomb {
+  --padding-horizontal: 5px;
+
+  position: absolute;
+  bottom: 4px;
+  left: calc(100% - 6px);
+  padding: 3px var(--padding-horizontal);
+  background: var(--modal_card_background);
+  color: var(--icon_tertiary);
+  border: 0.5px solid var(--image_border);
+  border-radius: 10px;
+  cursor: pointer;
+  font: 500 12px / 16px var(--font);
+  outline: 0;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.ConvoMessage--out .ConvoMessage__bomb {
+  left: auto;
+  right: calc(100% - 6px);
+}
+
+.ConvoMessage__bomb--soon {
+  color: var(--destructive); /* @TODO: correct token -- designers */
+}
+
+.ConvoMessage__bomb--blink {
+  animation: blink-animation 1s linear infinite;
+}
+
+@keyframes blink-animation {
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/**
+ * Тело сообщения
+ */
+
+.ConvoMessage__content {
+  position: relative;
+  word-wrap: break-word;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.ConvoMessage--withReply .ConvoMessage__content {
+  min-width: 140px;
+  padding-top: calc(
+    2 * var(--messageLineHeight) + var(--messageVerticalIndent) + 2px
+  );
+}
+
+.ConvoMessage__text {
+  flex: 1 1 auto;
+  max-width: 100%;
+}
+
+.ConvoMessage--wideAttach .ConvoMessage__text {
+  min-width: 100%;
+}
+
+.ConvoMessage__reply {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+/**
+ * Контейнер для аттачей
+ */
+
+.ConvoMessage__attachments {
+  max-width: none;
+  margin-top: var(--messageVerticalIndent);
+  margin-left: calc(
+    var(--messageAttachmentIndent) - var(--messageHorizontalIndent)
+  );
+  margin-right: calc(
+    var(--messageAttachmentIndent) - var(--messageHorizontalIndent)
+  );
+  margin-bottom: calc(
+    var(--messageAttachmentIndent) - var(--messageVerticalIndent)
+  );
+}
+
+.ConvoMessage--withDate .ConvoMessage__attachment {
+  /* Компенсируем отступ, которые появляется из-за даты */
+  margin-bottom: calc(
+    0.5 * var(--messageAttachmentIndent) - var(--messageVerticalIndent) -
+      var(--messageDateLineHeight)
+  );
+}
+
+.ConvoMessage--withAuthor .ConvoMessage__attachments {
+  margin-top: calc(var(--messageVerticalIndent) - 2px);
+}
+
+.ConvoMessage--attachOnly .ConvoMessage__attachments {
+  margin-top: calc(
+    var(--messageAttachmentIndent) - var(--messageVerticalIndent)
+  );
+}
+
+.ConvoMessage--noDate .ConvoMessage__attachments {
+  margin-bottom: calc(
+    var(--messageAttachmentIndent) - var(--messageVerticalIndent)
+  );
+}
+
+.ConvoMessage--attachOnly .ConvoMessage__reply + .ConvoMessage__text {
+  margin-top: var(--messageVerticalIndent);
+}
+
+.ConvoMessage__attachments + .ConvoMessage__forwardedMessages {
+  margin-top: calc(
+    var(--messageVerticalIndent) + var(--messageAttachmentIndent)
+  );
+}
+
+/**
+ * Время сообщения
+ */
+
+.ConvoMessage__date {
+  text-align: right;
+  flex: 1 0 auto;
+  margin: 0 calc(-2 / 3 * var(--messageHorizontalIndent))
+    calc(-0.5 * var(--messageVerticalIndent)) var(--messageDateMarginLeft);
+  align-self: flex-end;
+  justify-self: end;
+  font: 500 var(--messageDateFontSize) / var(--messageDateLineHeight)
+    var(--font);
+  color: var(--text_secondary);
+  padding: 3px 6px;
+  white-space: nowrap;
+}
+
+.ConvoMessage--floatDate .ConvoMessage__date {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.25); /* @TODO: correct token */
+  color: #fff; /* @TODO: correct token */
+  border-radius: 8px;
+}
+
+.ConvoMessage--noBackground .ConvoMessage__date {
+  margin: 0 calc(1 / 3 * var(--messageHorizontalIndent))
+    calc(0.5 * var(--messageVerticalIndent)) 1ch;
+}
+
+.ConvoMessage__empty {
+  color: var(--text_secondary);
+}
+
+.ConvoMessage__link,
+.ConvoMessage__link:hover {
+  text-decoration: none;
+  color: var(--text_link);
+  cursor: pointer;
+}
+
+.ConvoMessage--separateDate .ConvoMessage__content {
+  flex-direction: column;
+}
+
+.ConvoMessage--separateDate .ConvoMessage__date {
+  margin-top: calc(0.5 * (var(--messageVerticalIndent) - 1px));
+}
+
+.ConvoMessage--insetDate .ConvoMessage__date {
+  margin-top: calc(-1 * var(--messageDateLineHeight));
+}
+
+.PeerInfoPopper__popper {
+  background: var(--modal_card_background);
+  border-radius: 8px;
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.32);
+  position: relative;
+  z-index: 100;
+  margin: 8px 0;
+  opacity: 1;
+  transition: opacity 0.14s linear 0.3s, transform 0.14s linear 0.3s;
+}
+
+.PeerInfoPopper__popper--appear {
+  pointer-events: none;
+  transform: translateY(-10px);
+  opacity: 0;
+}
+
+.PeerInfoPopper__popper--appear-active {
+  opacity: 1;
+  transform: none;
+}
+
+.PeerInfoPopper__popper--exit {
+  opacity: 1;
+  transform: none;
+}
+
+.PeerInfoPopper__popper--exit-active {
+  transform: translateY(-10px);
+  opacity: 0;
+  transition: opacity 0.1s linear 0.1s, transform 0.1s linear 0.1s;
+}
+
+.PeerInfo {
+  display: grid;
+  min-width: 240px;
+  max-width: 400px;
+  padding: 12px 20px 12px 12px;
+  gap: 0 12px;
+  grid-template-areas:
+    'avatar title'
+    'avatar status'
+    'avatar followers'
+    'avatar mutual'
+    'avatar actions';
+}
+
+.PeerInfo__title {
+  grid-area: title;
+  overflow: hidden;
+}
+
+.PeerInfo__link {
+  color: var(--text_link);
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.PeerInfo__link:hover {
+  text-decoration: underline;
+}
+
+.PeerInfo__name {
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: -0.004em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.PeerInfo__verified {
+  display: inline-block;
+  color: var(--accent);
+}
+
+.PeerInfo__avatar {
+  grid-area: avatar;
+}
+
+.PeerInfo__status {
+  grid-area: status;
+  margin-top: 4px;
+  font: 13px / 16px var(--font);
+  color: var(--text_subhead);
+}
+
+.PeerInfo__mutual {
+  grid-area: mutual;
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  margin-top: 12px;
+  color: var(--text_secondary);
+}
+
+.PeerInfo__followers {
+  grid-area: followers;
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  margin-top: 4px;
+  color: var(--text_secondary);
+}
+
+.PeerInfo__actions {
+  grid-area: actions;
+  margin-top: 12px;
+}
+
+.PeerTitle {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  font-family: var(--font);
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  flex: 1 1 auto;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.PeerTitle__title {
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.PeerTitle--vkAdmin .PeerTitle__title {
+  color: var(--dynamic_green);
+}
+
+.PeerTitle__icon {
+  margin-left: 5px;
+}
+
+.PeerTitle__verifiedIcon {
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
+.PeerTitle--vkAdmin .PeerTitle__verifiedIcon {
+  display: none;
+}
+
+.PeerInfoActions {
+  display: grid;
+  gap: 8px;
+  grid-auto-flow: column;
+  justify-items: start;
+  justify-content: start;
+  position: relative;
+}
+
+.PeerInfoActions__callDropdown {
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-top: 4px;
+  max-width: initial;
+  background: var(--modal_card_background);
+  border-radius: 8px;
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.32);
+  pointer-events: none;
+  padding: 8px 0;
+  transform: translate(-50%, 10px);
+  opacity: 0;
+  transition: transform 0.3s 0.2s ease, opacity 0.2s 0.3s ease-in;
+}
+
+.PeerInfoActions__callDropdown--visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: all;
+  transition: transform 0.3s ease, opacity 0.2s ease-out;
+}
+
+.PeerInfoActions__callDropdownList {
+  display: flex;
+  flex-flow: column nowrap;
+  max-width: initial;
+}
+
+.PeerInfoActions__buttonIcon {
+  transform: translateY(1px);
+}
+
+.PeerInfoActions__callDropdownAction {
+  padding: 8px 12px;
+  background: var(--modal_card_background);
+  border: none;
+  outline: none;
+  box-shadow: none;
+  cursor: pointer;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: start;
+}
+
+.PeerInfoActions__callDropdownAction:hover {
+  background: var(--background_hover);
+}
+
+.PeerInfoActions__callDropdownIcon {
+  margin-right: 8px;
+}
+
+.PeerInfoActions__callDropdownText {
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--text_primary);
+  white-space: nowrap;
+}
+
+.PeerInfoActions__callDropdownIcon {
+  color: var(--accent);
+}
+
+.Reply {
+  position: relative;
+  flex: 0 1 128px;
+  padding: calc(0.5 * var(--messageVerticalIndent))
+    var(--messageHorizontalIndent);
+  white-space: nowrap;
+}
+
+.Reply::before {
+  position: absolute;
+  top: calc(0.5 * var(--messageVerticalIndent));
+  bottom: calc(0.5 * var(--messageVerticalIndent));
+  left: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--im_reply_separator);
+  content: '';
+}
+
+.Reply__author {
+  color: var(--text_link);
+  font: 500 0.925em / calc(0.875 * var(--messageLineHeight)) var(--font);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 2px;
+}
+
+.Reply__authorLink {
+  color: var(--text_link);
+  text-decoration: none;
+}
+
+.Reply__content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AttachGift {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+}
+
+.AttachGift__image {
+  width: 208px;
+  height: 208px;
+  border-radius: calc(var(--messageBorderRadius) - 4px);
+  background: #fff; /* @TODO: correct token */
+  margin: calc(8px - var(--messageVerticalIndent))
+    calc(8px - var(--messageHorizontalIndent)) var(--messageVerticalIndent);
+  max-width: none;
+  color: var(--text_secondary);
+}
+
+.AttachGift__title {
+  display: inline-flex;
+  align-items: center;
+}
+
+.AttachGift__title--withMessage {
+  margin-bottom: 4px;
+}
+
+.AttachGift__titleIcon {
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.MessageText {
+}
+
+.MessageText__link {
+  text-decoration: none;
+  color: var(--text_link);
+  padding: 1px 0; /* Без дырок между строк */
+}
+
+.MessageText__link:hover {
+  opacity: 0.9;
+}
+
+.MessageText__pseudoLink {
+  color: var(--text_link);
+}
+
+.AttachWall {
+  position: relative;
+  margin-top: var(--messageVerticalIndent);
+  padding: 0 0 0 var(--messageHorizontalIndent);
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+}
+
+.AttachWall::before {
+  border-radius: 1px 1px 0 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  content: '';
+  background: var(--im_forward_line_tint);
+}
+
+.AttachWall__link {
+  text-decoration: none;
+  color: var(--text_link);
+  cursor: pointer;
+}
+
+.AttachWall__link:hover {
+  text-decoration: underline;
+}
+
+.AttachWall__link--post {
+  border: 1px solid var(--text_link);
+  width: 100%;
+  border-radius: 4px;
+  padding: 4px 30px;
+  font: 500 13px / 16px var(--font);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--messageHorizontalIndent);
+}
+
+.AttachWall__link--post:hover {
+  text-decoration: none;
+}
+
+.AttachWall__link--text {
+  padding: 1px 0;
+}
+
+.AttachWall__info {
+  font: 500 12px / 14px var(--font);
+  letter-spacing: 0.005em;
+  color: var(--text_primary);
+  opacity: 0.4;
+}
+
+.AttachWall__info--with-message {
+  margin-top: calc(0.5 * var(--messageHorizontalIndent));
+}
+
+.AttachWall__header {
+  display: grid;
+  align-items: center;
+  grid-template-areas:
+    'avatar title'
+    'avatar date';
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr 1fr;
+  margin-bottom: var(--messageVerticalIndent);
+}
+
+.AttachWall__avatar {
+  grid-area: avatar;
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+}
+
+.AttachWall__titleLink {
+  grid-area: title;
+  color: var(--text_link);
+  font: 500 0.925em / calc(0.875 * var(--messageLineHeight)) var(--font);
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.AttachWall__date {
+  grid-area: date;
+  color: var(--text_secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AttachWall__message {
+  display: block;
+  margin-bottom: var(--messageHorizontalIndent);
+}
+
+.AttachWall__attaches {
+  max-width: none;
+  display: grid;
+  grid-template-columns: 100%;
+  gap: calc(0.5 * var(--messageVerticalIndent));
+}
+
+.AttachPhotos {
+  --borderRadius: var(--messageBorderRadius);
+
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+}
+
+.AttachPhotos--inBubble {
+  --borderRadius: calc(
+    var(--messageBorderRadius) - 0.25 * var(--messageLineHeight)
+  );
+}
+
+.AttachPhotos__link {
+  margin: 0 0 1px;
+  max-width: 100%;
+}
+
+.AttachPhotos__link:last-child {
+  margin: 0;
+}
+
+.AttachPhotos__img {
+  display: block;
+  width: 100%;
+  border-radius: 2px;
+}
+
+.AttachPhotos__link:first-child .AttachPhotos__img {
+  border-top-left-radius: var(--borderRadius);
+  border-top-right-radius: var(--borderRadius);
+}
+
+.AttachPhotos__link:last-child .AttachPhotos__img {
+  border-bottom-right-radius: var(--borderRadius);
+  border-bottom-left-radius: var(--borderRadius);
+}
+
+.AttachVideos {
+  --borderRadius: var(--messageBorderRadius);
+
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+}
+
+.AttachVideos__item {
+  --borderRadiusTop: var(--borderRadius);
+  --borderRadiusBottom: var(--borderRadius);
+
+  border-radius: var(--borderRadiusTop) var(--borderRadiusTop)
+    var(--borderRadiusBottom) var(--borderRadiusBottom);
+  overflow: hidden;
+}
+
+.AttachVideos__item + .AttachVideos__item {
+  margin-top: 2px;
+}
+
+.AttachVideos--inBubble .AttachVideos__item {
+  --borderRadius: calc(
+    var(--messageBorderRadius) - var(--messageAttachmentIndent)
+  );
+}
+
+.AttachVideos--inBubble .AttachVideos__item:nth-child(n + 2) {
+  --borderRadiusTop: 0;
+}
+
+.AttachVideos--inBubble .AttachVideos__item:nth-last-child(n + 2) {
+  --borderRadiusBottom: 0;
+}
+
+.AttachVideos__video {
+  display: block;
+  position: relative;
+  width: 216px;
+  min-width: 100%;
+  height: 0;
+  background: center / cover no-repeat;
+}
+
+.AttachVideos__videoDuration {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin: 8px;
+  padding: 5px 8px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.4); /* @TODO: correct token */
+  color: #fff; /* @TODO: correct token */
+  font-size: 12px;
+  line-height: 1;
+}
+
+.AttachVideos__videoPlay {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.5); /* @TODO: correct token */
+  border-radius: 50%;
+  color: #fff; /* @TODO: correct token */
+}
+
+.AttachLink {
+  max-width: 0;
+}
+
+.AttachCard,
+.AttachCard:hover {
+  text-decoration: none;
+  color: var(--text_primary);
+  display: flex;
+  justify-content: stretch;
+  border-radius: var(--messageBorderRadius);
+  max-width: none;
+}
+
+.AttachCard--withBackground {
+  color: #fff; /* @TODO: correct token */
+}
+
+.AttachCard__pic {
+  flex: 0 0 auto;
+  width: calc(4 * var(--messageLineHeight));
+  height: calc(4 * var(--messageLineHeight));
+  border-radius: var(--messageBorderRadius) 0 0 var(--messageBorderRadius);
+}
+
+.AttachCard__picPlaceholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--placeholder_icon_background_opaque);
+  color: var(--placeholder_icon_foreground_secondary);
+}
+
+.AttachCard__img {
+  object-fit: cover;
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+}
+
+.AttachCard--inBubble .AttachCard__pic {
+  width: calc(3.5 * var(--messageLineHeight));
+  height: calc(3.5 * var(--messageLineHeight));
+  border-radius: calc(
+    var(--messageBorderRadius) - var(--messageAttachmentIndent)
+  ); /* Радиус сообщения минус внутренний отступ для аттача */
+}
+
+.AttachCard__main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding: 0 calc(0.5 * var(--messageLineHeight));
+  border-radius: 0 var(--messageBorderRadius) var(--messageBorderRadius) 0;
+}
+
+.AttachCard__content {
+  min-height: calc(3 * var(--messageLineHeight));
+}
+
+/**
+ * Перебиваем специфичность в vkcom «[dir] h2»
+ */
+
+.AttachCard__title.AttachCard__title {
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  margin: 0;
+  padding: 0;
+}
+
+.AttachCard--withLongTitle .AttachCard__title {
+  white-space: normal;
+  word-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.AttachCard__caption {
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.AttachCard__meta {
+  color: var(--text_secondary);
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  margin-right: 4ch;
+}
+
+.AttachCard--withBackground .AttachCard__meta {
+  color: rgba(255, 255, 255, 0.72); /* @TODO: correct token */
+}
+
+.AttachMiniCard {
+  display: grid;
+  align-items: center;
+  grid-template-areas:
+    'icon title'
+    'icon meta';
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr 1fr;
+  text-decoration: none;
+  color: var(--text_primary);
+  margin-right: calc(0.5 * var(--messageHorizontalIndent));
+}
+
+.AttachMiniCard__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: calc(var(--messageBorderRadius) - 4px);
+  background: var(--background_content); /* @TODO: correct token */
+  grid-area: icon;
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--im_attach_tint); /* @TODO: correct token */
+}
+
+.AttachMiniCard__title {
+  grid-area: title;
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: end;
+}
+
+.AttachMiniCard__meta {
+  grid-area: meta;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  color: var(--text_secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AttachMarket__priceOld {
+  text-decoration: line-through;
+  padding-left: 5px;
+}
+
+.AttachGeo {
+  --borderRadius: var(--messageBorderRadius);
+
+  display: flex;
+  flex-direction: column;
+  max-width: none;
+}
+
+.AttachGeo--inBubble {
+  --borderRadius: calc(
+    var(--messageBorderRadius) - 0.25 * var(--messageLineHeight)
+  );
+}
+
+.AttachGeo__mapImage {
+  object-fit: cover;
+  border-radius: var(--borderRadius);
+}
+
+.AttachDoc {
+  max-width: none;
+  text-decoration: none;
+  color: var(--text_primary);
+  display: grid;
+  align-items: center;
+  grid-template-areas:
+    'icon title'
+    'icon meta';
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr 1fr;
+  padding: 0 calc(0.5 * var(--messageHorizontalIndent)) 0 0;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+}
+
+.AttachDoc__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: calc(var(--messageBorderRadius) - 4px);
+  background: var(--background_content); /* @TODO: correct token */
+  grid-area: icon;
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--im_attach_tint); /* @TODO: correct token */
+}
+
+.AttachDoc__title {
+  grid-area: title;
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: end;
+}
+
+.AttachDoc__meta {
+  grid-area: meta;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  color: var(--text_secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: start;
+}
+
+.AttachVoice {
+  max-width: 100%;
+  padding: 0 4px;
+}
+
+.AttachVoice__player {
+  display: flex; /* fallback */
+  display: grid;
+  grid-template:
+    'icon track button' 20px
+    'icon duration .' auto
+    / min-content auto min-content;
+  align-items: center;
+  cursor: pointer;
+}
+
+.AttachVoice__play {
+  grid-area: icon;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: 0;
+  color: var(--accent);
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+  outline: none;
+  cursor: pointer;
+}
+
+.AttachVoice__playIcon {
+  transition: all 0.14s;
+}
+
+.AttachVoice__play:active .AttachVoice__playIcon {
+  transform: scale(0.88);
+  opacity: 0.88;
+}
+
+.AttachVoice__track {
+  grid-area: track;
+  height: 12px;
+  position: relative;
+}
+
+.AttachVoice__track:empty::before {
+  content: 'This is a very long text that should take the whole available space so the maximum available space for the wave can be observed and used for the wave that is supposed to take all this space. Probably this should be even longer. Or maybe even a bit longer';
+  display: block;
+  color: transparent;
+  max-width: 100%;
+}
+
+.AttachVoice__svg {
+  display: block;
+  height: 12px;
+  max-width: 100%;
+}
+
+.AttachVoice__svg--shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.AttachVoice__path,
+.AttachVoice__progress {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  fill: none;
+  stroke: var(--accent);
+}
+
+.AttachVoice--active .AttachVoice__path,
+.AttachVoice--active .AttachVoice__progress {
+  transition: clip-path 0.25s linear;
+}
+
+.AttachVoice--active .AttachVoice__path {
+  stroke: var(--accent);
+  opacity: 0.4;
+}
+
+.AttachVoice__asrButton {
+  grid-area: button;
+  margin-left: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  background: none;
+  border-radius: 8px;
+  color: var(--accent);
+  position: relative; /* for background pseudo */
+  isolation: isolate; /* stack for background pseudo */
+  cursor: pointer;
+}
+
+.AttachVoice__asrButton::before {
+  content: '';
+  border-radius: inherit;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
+  opacity: 0.12;
+  transition: opacity 0.14s;
+  z-index: -1;
+}
+
+.AttachVoice__asrButton:hover::before,
+.AttachVoice__asrButton:focus::before {
+  opacity: 0.24;
+}
+
+.AttachVoice__asrButton--processing {
+  /* @TODO: анимация для состояния, когда для голосового ещё не сгенерирована транскрипция на сервере */
+}
+
+.AttachVoice__duration {
+  grid-area: duration;
+  font: 11px / 14px var(--font); /* @TODO разобраться с относительным размером */
+  color: var(--accent);
+}
+
+.AttachVoice__transcript {
+  margin-top: var(--messageVerticalIndent);
+  padding-left: 12px;
+  position: relative; /* anchors pseudo border */
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  color: var(--text_primary);
+}
+
+.AttachVoice__transcript::before {
+  content: '';
+  width: 2px;
+  height: 100%;
+  border-radius: 1px;
+  background-color: var(--im_forward_line_tint);
+  position: absolute;
+  top: 0;
+  left: 2px;
+}
+
+/**
+ * Автопоказанная транскрипция с обрезанием по длине
+ *
+ * Механика работы:
+ * -- строка текста переменной длины
+ * -- "буй" двигающийся с текстом, пока есть место
+ * -- к "бую" выше крепится кнопка, которая скрыта overflow
+ * -- когда текст заполняет все доступное место, "буй" уходит вниз
+ *    и вытягивает кнопку во вьюпорт
+ * -- скрипт следит за видимостью кнопки и включает класс
+ *    красивого фейда текста под нее
+ */
+
+.AttachVoice__collapseContainer {
+  --lineHeight: var(--messageLineHeight);
+  --buttonWidth: 20px;
+
+  height: var(--lineHeight);
+  overflow: hidden;
+}
+
+.AttachVoice__collapseContainer::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.AttachVoice__collapseContent {
+  float: left;
+  max-width: 100%;
+  height: var(--lineHeight);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.AttachVoice__collapseContent--long {
+  color: transparent;
+  background: linear-gradient(
+    to right,
+    var(--text_primary),
+    var(--text_primary) calc(100% - var(--buttonWidth) - 5px - 25px),
+    transparent calc(100% - var(--buttonWidth) - 5px)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.AttachVoice__collapseBuoy {
+  float: right;
+  width: 1px;
+  height: 1px;
+  position: relative; /* for control */
+}
+
+.AttachVoice__collapseControl {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  color: var(--icon_secondary);
+  height: var(--lineHeight);
+  opacity: 0.72;
+  transition: opacity 0.14s;
+  cursor: pointer;
+}
+
+.AttachVoice__collapseControl:hover {
+  opacity: 1;
+}
+
+.AttachVoice__collapseControl--buoyed {
+  position: absolute;
+  top: calc(-1 * var(--lineHeight));
+  right: 0;
+}
+
+.AttachVoice__collapseControl--floated {
+  float: right;
+  margin-left: 4px;
+}
+
+.AttachVoice__transcriptEditedLabel {
+  color: var(--text_subhead);
+}
+
+.AttachVoice__transcriptStub {
+  background: inherit;
+  background-clip: inherit;
+  -webkit-background-clip: inherit;
+  opacity: 0.4;
+}
+
+.AttachVoice__transcriptSettingButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  margin: 4px 0 0;
+  color: var(--text_link);
+  cursor: pointer;
+}
+
+.AttachAudio {
+  display: grid;
+  align-items: center;
+  grid-template-areas:
+    'button title title'
+    'button artist duration';
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr 1fr;
+  padding: 4px;
+}
+
+.AttachAudio__play {
+  grid-area: button;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--accent);
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+  color: var(--white); /* @TODO: correct token */
+  outline: none;
+  cursor: pointer;
+  padding: 4px 7px 7px 9px;
+}
+
+.AttachAudio--playing .AttachAudio__play {
+  padding: 4px 8px;
+}
+
+.AttachAudio__title {
+  grid-area: title;
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: end;
+}
+
+.AttachAudio__artist {
+  grid-area: artist;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  height: var(--messageLineHeight);
+  color: var(--text_secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AttachAudio__duration {
+  position: relative;
+  grid-area: duration;
+  font: 12px / calc(var(--messageLineHeight) - 2px) var(--font);
+  height: var(--messageLineHeight);
+  color: var(--text_secondary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/**
+ * Трик, который решает 2 задачи:
+ * 1. Создаёт экологичный отступ между артистом и временем записи
+ * 2. Выравнивает артиста и длительность записи по базовой линии
+ */
+
+.AttachAudio__duration::before,
+.AttachAudio__durationIn::before {
+  content: '\00a0\00a0';
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  visibility: hidden;
+}
+
+/**
+ * - В атрибуте data-filler лежит строка вида «-000:00», которая представляет
+ * из себя максимальную по длине строку, которая может отрендериться в блоке.
+ * - Логика основана на том, что ноль во всех используемых шрифтах будет самым
+ * широким символом.
+ * - Нужно для того, чтобы аттач отрендерился с такой минимальной шириной, 
+ * с которой мы можем менять содержимое блока с длительностью так, чтобы текст 
+ * всегда влазил и выглядил хорошо
+ */
+
+.AttachAudio__duration::after {
+  content: attr(data-filler);
+  visibility: hidden;
+}
+
+.AttachAudio__durationIn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.AttachAudio__playIcon {
+  transition: all 0.14s;
+}
+
+.AttachAudioPlaylist__icon {
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--messageBorderRadius) - 4px);
+  background: var(--background_content); /* @TODO: correct token */
+  grid-area: icon;
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--im_attach_tint); /* @TODO: correct token */
+}
+
+/** Специфичность для vkcom */
+.AttachMiniApp.AttachMiniApp {
+  display: flex;
+  text-decoration: none;
+}
+.AttachMiniApp__cover {
+  position: relative;
+  user-select: none;
+}
+.AttachMiniApp__cover,
+.AttachMiniApp__coverImage {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+
+  display: block;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+.AttachMiniApp__cover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  pointer-events: none;
+
+  border-radius: 10px;
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.08) inset;
+}
+.AttachMiniApp__fields {
+  margin-left: 8px;
+
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+
+  overflow: hidden;
+}
+/** Специфичность для vkcom */
+.AttachMiniApp__fields .AttachMiniApp__fieldsTitle,
+.AttachMiniApp__fields .AttachMiniApp__fieldsDescription {
+  font-style: normal;
+  color: var(--text_primary);
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+.AttachMiniApp__fieldsTitle {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+}
+.AttachMiniApp__fieldsDescription {
+  font-size: 12px;
+  font-weight: normal;
+
+  line-height: 14px;
+  margin-top: 2px;
+  opacity: 0.4;
+}
+
+.AttachWallHistory {
+  display: grid;
+  align-items: center;
+  grid-template-areas:
+    'icon title'
+    'icon meta';
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr 1fr;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--text_primary);
+  margin-right: calc(0.5 * var(--messageHorizontalIndent));
+}
+
+.AttachWallHistory__icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent);
+  grid-area: icon;
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--button_primary_foreground);
+}
+
+.AttachWallHistory__title {
+  grid-area: title;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: end;
+}
+
+.AttachWallHistory__meta {
+  grid-area: meta;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text_secondary);
+}
+
+/* wrapper */
+
+.AttachArticle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  border-radius: var(--attachArticleBorderRadius);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.AttachArticle:hover {
+  text-decoration: none;
+}
+
+.AttachArticle::before {
+  content: '';
+  padding-bottom: 56.25%; /* Так аттачу статьи задается высота (по аналогии с подходом в vk.com) */
+}
+
+.AttachArticle::after {
+  z-index: 1;
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.AttachArticle--withoutImage::after {
+  box-shadow: inset 0 0 50px white;
+}
+
+.AttachArticle--compact.AttachArticle--withoutImage::after {
+  box-shadow: inset 0 0 45px rgba(255, 255, 255, 0.7);
+}
+
+.AttachArticle--notAvailable {
+  background-color: var(--light_blue_40);
+}
+
+.AttachArticle--notAvailable:hover {
+  cursor: default;
+}
+
+.AttachArticle--notAvailable::after {
+  box-shadow: none;
+}
+
+.AttachArticle--compact.AttachArticle--notAvailable::after {
+  box-shadow: none;
+}
+
+.MessageText + .AttachArticle {
+  margin-top: var(--messageVerticalIndent);
+}
+
+/* content */
+
+.AttachArticle__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* notAvailable caption */
+
+.AttachArticle__notAvailableCaption {
+  z-index: 2;
+  color: var(--white);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.AttachArticle--compact .AttachArticle__notAvailableCaption {
+  font-size: 14px;
+}
+
+/* title */
+
+.AttachArticle__title {
+  z-index: 2;
+  color: var(--white);
+  font-weight: 900;
+  font-size: 19px;
+  line-height: 120%;
+  padding: 0 40px;
+  text-align: center;
+}
+
+.AttachArticle--compact .AttachArticle__title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 110%;
+  padding: 0 20px;
+}
+
+.AttachArticle--compact .AttachArticle__title {
+  padding: 0 10px;
+}
+
+.AttachArticle--compact.AttachArticle--forwarded .AttachArticle__title {
+  font-size: 14px;
+}
+
+/* author */
+
+.AttachArticle__author {
+  z-index: 2;
+  font-size: 16px;
+  color: var(--white);
+  margin-top: 10px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  padding: 0 30px;
+}
+
+.AttachArticle--compact .AttachArticle__author {
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* read button */
+
+/* дублирование (здесь и далее) для повышения специфичности селектора в vk.com */
+
+.AttachArticle__readBtn.AttachArticle__readBtn {
+  z-index: 2;
+  margin-top: 32px;
+}
+
+.AttachArticle--compact .AttachArticle__readBtn.AttachArticle__readBtn {
+  margin-top: 14px;
+}
+
+.AttachArticle--compact.AttachArticle--forwarded
+  .AttachArticle__readBtn.AttachArticle__readBtn {
+  margin-top: 10px;
+}
+
+.AttachSticker__static {
+  width: 100%;
+  height: 100%;
+}
+
+.AttachSticker--size-72 {
+  width: 72px;
+  height: 72px;
+}
+
+.AttachSticker--size-96 {
+  width: 96px;
+  height: 96px;
+}
+
+.AttachSticker--size-128 {
+  width: 128px;
+  height: 128px;
+}
+
+.AttachActiveCall {
+}
+
+.AttachActiveCall__info {
+  overflow: hidden;
+}
+
+.AttachActiveCall__title,
+.AttachActiveCall__description {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.AttachActiveCall__title {
+  font: 13px / 16px var(--font);
+  font-weight: 500;
+}
+
+.AttachActiveCall__description {
+  font: 12px / 14px var(--font);
+  opacity: 0.4;
+}
+
+.AttachActiveCall__join {
+  cursor: pointer;
+}
+
+/* Полноразмерный */
+
+.AttachActiveCall--full {
+  display: flex;
+}
+
+.AttachActiveCall--full .AttachActiveCall__info {
+  display: flex;
+  margin-right: auto;
+}
+
+.AttachActiveCall__userList {
+  margin-right: 8px;
+}
+
+.AttachActiveCall--full .AttachActiveCall__infoWrapper {
+  overflow: hidden;
+}
+
+.AttachActiveCall--full .AttachActiveCall__join {
+  margin-left: 32px;
+}
+
+/* Компактный */
+
+.AttachActiveCall--compact {
+  min-width: 175px;
+}
+
+.AttachActiveCall--compact .AttachActiveCall__infoWrapper {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  margin-top: 6px;
+}
+
+.AttachActiveCall--compact .AttachActiveCall__userList {
+  margin-right: 6px;
+}
+
+.AttachActiveCall--compact .AttachActiveCall__join {
+  margin-top: 8px;
+}
+
+.Attachments {
+  max-width: none;
+  display: grid;
+  grid-template-columns: 100%;
+  gap: calc(0.5 * var(--messageVerticalIndent));
+}
+
+.ForwardedMessage {
+  position: relative;
+  margin-top: var(--messageVerticalIndent);
+  padding: 0 0 0 var(--messageHorizontalIndent);
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+}
+
+.ForwardedMessage + .ForwardedMessage {
+  padding-top: var(--messageHorizontalIndent);
+}
+
+.ForwardedMessage .ForwardedMessage {
+  margin-left: calc(-0.5 * var(--messageHorizontalIndent));
+}
+
+.ForwardedMessage::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  content: '';
+  background: var(--im_forward_line_tint);
+}
+
+.ForwardedMessage:first-of-type::before {
+  border-radius: 1px 1px 0 0;
+}
+
+.ForwardedMessage:last-of-type::before {
+  border-radius: 0 0 1px 1px;
+}
+
+.ForwardedMessage__header {
+  display: grid;
+  align-items: center;
+  grid-template-areas:
+    'avatar title'
+    'avatar date';
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr 1fr;
+  margin: 0 0 calc(0.5 * var(--messageVerticalIndent));
+}
+
+.ForwardedMessage__avatar {
+  grid-area: avatar;
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+}
+
+.ForwardedMessage__title {
+  color: var(--text_link);
+  grid-area: title;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ForwardedMessage__titleLink {
+  color: var(--text_link);
+  font: 500 0.925em / calc(0.875 * var(--messageLineHeight)) var(--font);
+  text-decoration: none;
+}
+
+.ForwardedMessage__link,
+.ForwardedMessage__link:hover {
+  text-decoration: none;
+  color: var(--text_link);
+  cursor: pointer;
+}
+
+.ForwardedMessage__date {
+  grid-area: date;
+  color: var(--text_secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ForwardedMessage__empty {
+  color: var(--text_secondary);
+}
+
+.ForwardedMessage__text:empty + .ForwardedMessage__attachments {
+  padding-top: calc(0.5 * var(--messageVerticalIndent));
+}
+
+.BotKeyboard--full {
+  padding: 8px;
+  border-top: 1px solid var(--separator_alternate);
+  max-height: 210px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.BotKeyboard--inline {
+  padding-top: 8px;
+  margin-left: calc(
+    var(--messageKeyboardIndent) - var(--messageHorizontalIndent)
+  );
+  margin-right: calc(
+    var(--messageKeyboardIndent) - var(--messageHorizontalIndent)
+  );
+  display: flex;
+  flex-direction: column;
+}
+
+.BotKeyboard__row {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.BotKeyboard--inline .BotKeyboard__row {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.BotKeyboard--inline .BotKeyboard__button:last-child:nth-child(odd) {
+  grid-column: 1/3;
+}
+
+.BotKeyboard__row:last-child {
+  margin-bottom: 0;
+}
+
+.BotKeyboard__button {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+}
+
+.BotKeyboard__button:not(:last-child) {
+  margin-right: 8px;
+}
+
+.BotButton__linkButton,
+.BotButton__linkButton:hover {
+  text-decoration: none;
+}
+
+.BotButton__vkpay {
+  display: flex;
+  align-items: center;
+}
+
+.BotTemplateList {
+  width: 310px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.BotTemplateList__wrapper {
+  display: flex;
+}
+
+.BotTemplateList__item {
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.HorizontalScroll {
+  position: relative;
+  overflow: hidden;
+}
+
+.HorizontalScroll__in {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 20px;
+  margin-bottom: -20px;
+}
+
+.HorizontalScroll__in::-webkit-scrollbar {
+  display: none;
+}
+
+.HorizontalScroll__in-wrapper {
+  transition: transform 0.2s;
+}
+
+.HorizontalScroll__leftBorder {
+  position: absolute;
+  width: 20px;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    var(--background_content),
+    transparent 70%
+  );
+  height: 100%;
+  will-change: opacity;
+  transition: opacity 0.15s;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.HorizontalScroll__leftBorder--active {
+  opacity: 1;
+}
+
+.HorizontalScroll__arrow {
+  position: absolute;
+  cursor: pointer;
+  user-select: auto;
+  top: 0;
+  height: 100%;
+  opacity: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+
+.HorizontalScroll--ios .HorizontalScroll__arrow,
+.Gallery--ios .HorizontalScroll__arrow {
+  transition-timing-function: var(--ios-easing);
+}
+
+.HorizontalScroll--android .HorizontalScroll__arrow,
+.HorizontalScroll--vkcom .HorizontalScroll__arrow,
+.Gallery--android .HorizontalScroll__arrow,
+.Gallery--vkcom .HorizontalScroll__arrow {
+  transition-timing-function: var(--android-easing);
+}
+
+.HorizontalScroll:hover .HorizontalScroll__arrow,
+.Gallery:hover .HorizontalScroll__arrow {
+  opacity: 0.72;
+}
+
+.HorizontalScroll:hover .HorizontalScroll__arrow:hover,
+.Gallery:hover .HorizontalScroll__arrow:hover {
+  opacity: 1;
+}
+
+.HorizontalScroll__arrow-icon {
+  background-color: var(--modal_card_background);
+  color: var(--icon_secondary);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 0 10px rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.HorizontalScroll__arrow-left {
+  left: 0;
+}
+
+.HorizontalScroll__arrow-left .HorizontalScroll__arrow-icon {
+  transform: rotate(180deg);
+}
+
+.HorizontalScroll__arrow-right {
+  right: 0;
+}
+
+.HorizontalScroll__arrow-left:hover
+  ~ .HorizontalScroll__in
+  .HorizontalScroll__in-wrapper {
+  transform: translateX(8px);
+}
+
+.HorizontalScroll__arrow-right:hover
+  ~ .HorizontalScroll__in
+  .HorizontalScroll__in-wrapper {
+  transform: translateX(-8px);
+}
+
+.HorizontalScroll__arrow--size-s.HorizontalScroll__arrow-left {
+  padding-left: 12px;
+}
+
+.HorizontalScroll__arrow--size-s.HorizontalScroll__arrow-right {
+  padding-right: 12px;
+}
+
+.HorizontalScroll__arrow--size-s .HorizontalScroll__arrow-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.HorizontalScroll__arrow--size-m.HorizontalScroll__arrow-left {
+  padding-left: 16px;
+}
+
+.HorizontalScroll__arrow--size-m.HorizontalScroll__arrow-right {
+  padding-right: 16px;
+}
+
+.HorizontalScroll__arrow--size-m .HorizontalScroll__arrow-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.BotTemplateControls {
+  padding: 8px;
+  border-radius: 14px;
+  background: var(--im_bubble_incoming);
+  overflow: hidden;
+  width: 260px;
+  text-decoration: none;
+  min-height: 118px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.BotTemplateControls__photo {
+  margin: -8px -8px 0 -8px;
+  width: 260px;
+  height: 158px;
+  background-size: cover;
+  margin-bottom: 8px;
+}
+
+.BotTemplateControls__title {
+  margin-bottom: 4px;
+}
+
+.BotTemplateControls__description {
+  margin-bottom: 8px;
+  color: var(--text_subhead);
+}
+
+.BotTemplateControls__button:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.BotTemplateControls__link,
+.BotTemplateControls__link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.ServiceMessage {
+  color: #828282; /* @TODO: correct token */
+  font: calc(0.925 * var(--messageFontSize)) / var(--messageLineHeight)
+    var(--font);
+  box-sizing: border-box;
+  width: 100%;
+  padding: 5px calc(2 * var(--messageHorizontalIndent));
+  text-align: center;
+  word-break: break-word;
+}
+
+.ServiceMessage__link {
+  text-decoration: none;
+  color: #828282; /* @TODO: correct token */
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.ServiceMessage__link:hover {
+  opacity: 0.8;
+}
+
+.ServiceMessageAttach__photo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.ServiceMessageAttach__photo-image {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.ServiceMessageAttach__photo--size-s .ServiceMessageAttach__photo-image {
+  width: 75px;
+  height: 75px;
+}
+
+.ServiceMessageAttach__photo--size-m .ServiceMessageAttach__photo-image {
+  width: 130px;
+  height: 130px;
+}
+
+.ServiceMessageAttach__photo-image img {
+  max-width: 100%;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.ExpiredMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.ExpiredMessage__container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 9.5px 12px 8.5px 12px;
+  border: 0.5px solid var(--snippet_border);
+  border-radius: 18px;
+}
+
+.ExpiredMessage__icon {
+  margin-right: 9px;
+  color: var(--icon_tertiary);
+}
+
+.ExpiredMessage__text {
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: 0.005em;
+  color: var(--text_secondary);
+}
+
+.ConvoHistoryTyping {
+  display: flex;
+  align-items: center;
+  /**
+   * Тайпинг не должен влиять на высоту истории,
+   * компонент встраивается в область нижнего паддинга истории,
+   * поэтому использует переменные
+   */
+  min-height: var(--historyPaddingBottom);
+  padding: 0 30px 0 var(--historyPaddingLeft);
+  margin-top: calc(-1 * var(--historyPaddingBottom));
+  white-space: nowrap;
+  color: var(--text_tertiary);
+}
+
+.ConvoHistoryTyping__indicator {
+  flex: 0 0 32px;
+  width: 32px; /* Ширина аватарки автора стека сообщений */
+  margin-right: 8px;
+}
+
+.ConvoHistoryTyping__text {
+  width: min-content;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ConvoBannerMessage {
+  display: flex;
+  align-items: center;
+  min-height: var(--convoBannerHeight);
+  padding: 8px 0;
+  width: 100%;
+  align-items: center;
+}
+.ConvoBannerMessage--compact {
+  padding: 7px 0;
+}
+.ConvoBannerMessage__icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 12px;
+  flex: 0 0 auto;
+}
+.ConvoBannerMessage__content {
+  display: flex;
+  align-items: center;
+  grid-area: content;
+  justify-content: space-between;
+  overflow: hidden;
+  flex: 1 1 auto;
+}
+.ConvoBannerMessage__content--center {
+  justify-content: center;
+}
+.ConvoBannerMessage__content--column {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.ConvoBannerMessage__message {
+  display: flex;
+  white-space: nowrap;
+  justify-content: center;
+  flex-flow: column;
+  overflow: hidden;
+  width: 100%;
+}
+.ConvoBannerMessage__message--wrapText {
+  white-space: normal;
+}
+.ConvoBannerMessage__title {
+  font: 500 13px/16px var(--font);
+  color: var(--text_primary);
+}
+.ConvoBannerMessage__text {
+  font: 400 13px/16px var(--font);
+  color: var(--text_primary);
+  padding-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ConvoBannerMessage__title + .ConvoBannerMessage__text {
+  line-height: 16px;
+  padding-top: 0;
+}
+.ConvoBannerMessage__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.ConvoBannerMessage__warningButton {
+  font: 400 13px/16px var(--font);
+  color: var(--destructive);
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.ConvoBannerMessage__warningButton:hover {
+  text-decoration: underline;
+}
+.ConvoBannerMessage__close {
+  align-self: center;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: 0;
+  outline: none;
+  color: var(--icon_secondary);
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 200ms ease;
+  margin-left: 12px;
+}
+.ConvoBannerMessage__close:hover {
+  opacity: 1;
+}
+
+.ConvoBannerWrapper {
+  --convoBannerHeight: 52px;
+  --convoBannerPadding: 0 16px;
+  --convoBannerBackground: var(--background_content);
+
+  display: flex;
+  justify-self: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  box-shadow: 0 2px 4px var(--background_highlighted);
+  transition: opacity 320ms ease, min-height 0ms linear,
+    visibility 0ms 320ms linear;
+  opacity: 1;
+}
+
+.ConvoBannerWrapper[hidden] {
+  opacity: 0;
+  height: 0;
+  min-height: 0;
+  visibility: hidden;
+  z-index: 1;
+  overflow: visible;
+}
+
+.ConvoBannerWrapper[hidden] .ConvoBannerWrapper__content {
+  position: absolute;
+  top: 0;
+}
+
+.ConvoBannerWrapper--compact {
+  --convoBannerHeight: 48px;
+  --convoBannerPadding: 0 14px;
+}
+
+.ConvoBannerWrapper--spam {
+  --convoBannerBackground: var(--field_background);
+}
+
+.ConvoBannerWrapper__content {
+  position: relative;
+  width: 100%;
+  min-height: var(--convoBannerHeight);
+  padding: var(--convoBannerPadding);
+  background: var(--convoBannerBackground);
+}
+
+.ConvoBannerWrapper__content::before {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--separator_common);
+}
+
+.ConvoPinnedMessage {
+  height: var(--convoBannerHeight);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: var(--background_content);
+  cursor: pointer;
+}
+
+.ConvoPinnedMessage__icon {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--icon_outline_secondary);
+}
+
+.ConvoPinnedMessage__content {
+  display: flex;
+  padding: 0 10px;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 1 auto;
+}
+
+.ConvoPinnedMessage__info {
+  height: 16px;
+  margin-bottom: 2px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.ConvoPinnedMessage__authorLink {
+  font: 500 13px / 16px var(--font);
+  color: var(--text_link);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ConvoPinnedMessage__authorLink:hover {
+  text-decoration: underline;
+}
+
+.ConvoPinnedMessage__date {
+  font: 500 12px / 14px var(--font);
+  color: var(--text_secondary);
+  opacity: 0.7;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+
+.ConvoPinnedMessage__text {
+  font: 400 12px / 14px var(--font);
+  color: var(--text_primary);
+  height: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ConvoPinnedMessage__text--hidden {
+  color: var(--text_secondary);
+  opacity: 0.7;
+}
+
+.ConvoPinnedMessage__unpinButton {
+  font: 400 12px / 14px var(--font);
+  padding: 6px 12px;
+  background-color: var(--button_secondary_background);
+  border: none;
+  color: var(--button_secondary_foreground);
+  border-radius: 4px;
+  display: flex;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.ConvoPinnedMessage__unpinButton:hover {
+  background-color: var(--button_secondary_background_highlighted);
+}
+
+.ConvoPinnedMessage__close {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  background: none;
+  border: 0;
+  outline: none;
+  color: var(--icon_secondary);
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+
+.ConvoPinnedMessage__close:hover {
+  opacity: 1;
+}
+
+.StickersPanel {
+  max-width: none;
+  padding: 12px 0 8px 0;
+  position: relative;
+  background-color: var(--background_content);
+}
+
+.StickersPanel::before {
+  content: '';
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  position: absolute;
+  top: 0;
+  background-color: var(--separator_alternate);
+}
+
+.StickersPanel__list {
+  display: inline-flex;
+  max-width: none;
+  margin: 0 8px;
+}
+
+.StickersPanel__listItem {
+  padding: 4px;
+  border-radius: 4px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.StickersPanel__listItem:hover {
+  background: var(--content_tint_background);
+}
+
+.StickersPanel__listItem:last-child {
+  margin-right: 0;
+}
+
+.StickersPanel__listItem:first-child {
+}
+
+.ComposerAttaches {
+}
+
+.ComposerAttaches__list {
+  display: flex;
+  list-style: none;
+  padding: 6px 0;
+  margin: 0;
+}
+
+.ComposerAttaches__list::before,
+.ComposerAttaches__list::after {
+  flex-shrink: 0;
+  content: 'a'; /* ff hack* */
+  display: block;
+  width: 6px;
+  height: 100%;
+  color: transparent; /* ff hack */
+  overflow: hidden; /* ff hack */
+  /*
+   * there should be a pseudo element and it can't
+   * be empty thanks to the haters at firefox:
+   * https://bugzilla.mozilla.org/show_bug.cgi?id=748518
+   */
+}
+
+.ComposerAttaches__item {
+  position: relative;
+}
+
+.ComposerAttaches__item + .ComposerAttaches__item {
+  margin-left: 6px;
+}
+
+.ComposerAttaches__remove {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #fff; /* @TODO: correct token */
+  background: var(--icon_secondary);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.14s ease;
+}
+
+.ComposerAttaches__item:hover .ComposerAttaches__remove {
+  opacity: 1;
+}
+
+.ComposerAttachPhoto {
+  display: flex;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 8px;
+  position: relative; /* anchors pseudo element */
+  overflow: hidden;
+}
+
+.ComposerAttachPhoto__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ComposerAttachPhoto::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: inherit;
+}
+
+.ComposerAttachVideo {
+  display: flex;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 8px;
+  position: relative; /* anchors positioned children */
+  overflow: hidden;
+}
+
+.ComposerAttachVideo__img {
+  max-width: none;
+}
+
+.ComposerAttachVideo::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: inherit;
+}
+
+.ComposerAttachVideo__videoDuration {
+  height: 18px;
+  max-width: calc(100% - 8px);
+  padding: 2px 4px;
+  font-size: 11px;
+  line-height: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff; /* @TODO: correct token */
+  background: rgba(0, 0, 0, 0.56); /* @TODO: correct token */
+  border-radius: 4px;
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+}
+
+.ComposerAttachCard {
+  width: 68px;
+  height: 68px;
+  border-radius: 8px;
+  background: var(--im_bubble_incoming);
+  font-size: 13px;
+  line-height: 16px;
+  padding: 6px 0 6px 6px;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+
+.ComposerAttachCard__icon {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 4px;
+  color: var(--icon_secondary);
+}
+
+.ComposerAttachCard__overflow {
+  white-space: nowrap;
+  color: transparent;
+  background: linear-gradient(
+    to right,
+    var(--text_primary),
+    var(--text_primary) calc(100% - 15px),
+    transparent calc(100% - 3px)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.ComposerAttachCard__main {
+  font-weight: 500;
+}
+
+.ComposerAttachCard__secondary {
+  opacity: 0.4;
+}
+
+.ComposerBlocked {
+  display: flex;
+  width: 100%;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.ComposerBlocked__info {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.ComposerBlocked__info_big {
+  padding-left: 10px;
+}
+
+.ComposerBlocked__icon {
+  color: var(--dynamic_orange);
+  margin-right: 10px;
+}
+
+.ComposerBlocked__button .ComposerBlocked__icon {
+  color: var(--icon_outline_medium);
+  margin-right: 5px;
+}
+
+.ComposerBlocked__message {
+  font-weight: normal;
+}
+
+.ComposerBlocked .FCComposer__button {
+  /* Сбрасываем настройки кнопки */
+  flex: none;
+  width: auto;
+  height: auto;
+}
+
+.ComposerBlocked__button:hover .ComposerBlocked__message {
+  text-decoration: underline;
+}
+
+try{stManager.done('dist/c565bd4c03935309f8a94999b93eb4f2.85519054e5c9e6397f8b.css');}catch(e){}

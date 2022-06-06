@@ -1,0 +1,1101 @@
+﻿.ConvoAttachments {
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+
+.ConvoAttachments__block {
+  overflow: auto;
+}
+
+.ConvoAttachments__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* лоадер подгрузки */
+
+.ConvoAttachments__loader {
+  padding: 20px;
+}
+
+/* лоадер при пустом списке */
+
+.ConvoAttachments__loader:only-child {
+  min-width: 100%;
+  min-height: 100%;
+  /* Придумать стили для разных видов загрузчика */
+}
+
+.ConvoAttachments__empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ConvoAtachments__docItem + .ConvoAtachments__docItem {
+  margin-top: 7px;
+}
+
+.AttachAudio {
+  display: grid;
+  align-items: center;
+  grid-template-areas:
+    'button title title'
+    'button artist duration';
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr 1fr;
+  padding: 4px;
+}
+
+.AttachAudio__play {
+  grid-area: button;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--accent);
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+  color: var(--white); /* @TODO: correct token */
+  outline: none;
+  cursor: pointer;
+  padding: 4px 7px 7px 9px;
+}
+
+.AttachAudio--playing .AttachAudio__play {
+  padding: 4px 8px;
+}
+
+.AttachAudio__title {
+  grid-area: title;
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: end;
+}
+
+.AttachAudio__artist {
+  grid-area: artist;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  height: var(--messageLineHeight);
+  color: var(--text_secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AttachAudio__duration {
+  position: relative;
+  grid-area: duration;
+  font: 12px / calc(var(--messageLineHeight) - 2px) var(--font);
+  height: var(--messageLineHeight);
+  color: var(--text_secondary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/**
+ * Трик, который решает 2 задачи:
+ * 1. Создаёт экологичный отступ между артистом и временем записи
+ * 2. Выравнивает артиста и длительность записи по базовой линии
+ */
+
+.AttachAudio__duration::before,
+.AttachAudio__durationIn::before {
+  content: '\00a0\00a0';
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  visibility: hidden;
+}
+
+/**
+ * - В атрибуте data-filler лежит строка вида «-000:00», которая представляет
+ * из себя максимальную по длине строку, которая может отрендериться в блоке.
+ * - Логика основана на том, что ноль во всех используемых шрифтах будет самым
+ * широким символом.
+ * - Нужно для того, чтобы аттач отрендерился с такой минимальной шириной, 
+ * с которой мы можем менять содержимое блока с длительностью так, чтобы текст 
+ * всегда влазил и выглядил хорошо
+ */
+
+.AttachAudio__duration::after {
+  content: attr(data-filler);
+  visibility: hidden;
+}
+
+.AttachAudio__durationIn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.AttachAudio__playIcon {
+  transition: all 0.14s;
+}
+
+.AttachDoc {
+  max-width: none;
+  text-decoration: none;
+  color: var(--text_primary);
+  display: grid;
+  align-items: center;
+  grid-template-areas:
+    'icon title'
+    'icon meta';
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr 1fr;
+  padding: 0 calc(0.5 * var(--messageHorizontalIndent)) 0 0;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+}
+
+.AttachDoc__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: calc(var(--messageBorderRadius) - 4px);
+  background: var(--background_content); /* @TODO: correct token */
+  grid-area: icon;
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--im_attach_tint); /* @TODO: correct token */
+}
+
+.AttachDoc__title {
+  grid-area: title;
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: end;
+}
+
+.AttachDoc__meta {
+  grid-area: meta;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  color: var(--text_secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: start;
+}
+
+.AttachLink {
+  max-width: 0;
+}
+
+.AttachCard,
+.AttachCard:hover {
+  text-decoration: none;
+  color: var(--text_primary);
+  display: flex;
+  justify-content: stretch;
+  border-radius: var(--messageBorderRadius);
+  max-width: none;
+}
+
+.AttachCard--withBackground {
+  color: #fff; /* @TODO: correct token */
+}
+
+.AttachCard__pic {
+  flex: 0 0 auto;
+  width: calc(4 * var(--messageLineHeight));
+  height: calc(4 * var(--messageLineHeight));
+  border-radius: var(--messageBorderRadius) 0 0 var(--messageBorderRadius);
+}
+
+.AttachCard__picPlaceholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--placeholder_icon_background_opaque);
+  color: var(--placeholder_icon_foreground_secondary);
+}
+
+.AttachCard__img {
+  object-fit: cover;
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+}
+
+.AttachCard--inBubble .AttachCard__pic {
+  width: calc(3.5 * var(--messageLineHeight));
+  height: calc(3.5 * var(--messageLineHeight));
+  border-radius: calc(
+    var(--messageBorderRadius) - var(--messageAttachmentIndent)
+  ); /* Радиус сообщения минус внутренний отступ для аттача */
+}
+
+.AttachCard__main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding: 0 calc(0.5 * var(--messageLineHeight));
+  border-radius: 0 var(--messageBorderRadius) var(--messageBorderRadius) 0;
+}
+
+.AttachCard__content {
+  min-height: calc(3 * var(--messageLineHeight));
+}
+
+/**
+ * Перебиваем специфичность в vkcom «[dir] h2»
+ */
+
+.AttachCard__title.AttachCard__title {
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  margin: 0;
+  padding: 0;
+}
+
+.AttachCard--withLongTitle .AttachCard__title {
+  white-space: normal;
+  word-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.AttachCard__caption {
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.AttachCard__meta {
+  color: var(--text_secondary);
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  margin-right: 4ch;
+}
+
+.AttachCard--withBackground .AttachCard__meta {
+  color: rgba(255, 255, 255, 0.72); /* @TODO: correct token */
+}
+
+.AttachMiniCard {
+  display: grid;
+  align-items: center;
+  grid-template-areas:
+    'icon title'
+    'icon meta';
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr 1fr;
+  text-decoration: none;
+  color: var(--text_primary);
+  margin-right: calc(0.5 * var(--messageHorizontalIndent));
+}
+
+.AttachMiniCard__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: calc(var(--messageBorderRadius) - 4px);
+  background: var(--background_content); /* @TODO: correct token */
+  grid-area: icon;
+  margin-right: calc(0.8 * var(--messageHorizontalIndent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--im_attach_tint); /* @TODO: correct token */
+}
+
+.AttachMiniCard__title {
+  grid-area: title;
+  font: 500 var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-self: end;
+}
+
+.AttachMiniCard__meta {
+  grid-area: meta;
+  font: var(--messageFontSize) / var(--messageLineHeight) var(--font);
+  color: var(--text_secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ConvoAttachesPhotos {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  column-gap: 8px;
+  row-gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.ConvoAttachesPhotos__item {
+  overflow: hidden;
+  position: relative;
+  background: var(--background_highlighted);
+}
+
+.ConvoAttachesPhotos__item::before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+.ConvoAttachPhoto__img {
+  object-fit: cover;
+  min-height: 100%;
+  min-width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ConvoAttachesPhotos__tail {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ConvoAttachesVideos {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  column-gap: 8px;
+  row-gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.ConvoAttachesVideos__preview {
+  overflow: hidden;
+  position: relative;
+  background: #000;
+}
+
+.ConvoAttachesVideos__preview::before {
+  content: '';
+  display: block;
+  padding-top: 75%;
+}
+
+.ConvoAttachesVideo__img {
+  object-fit: contain;
+  min-height: 100%;
+  min-width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ConvoAttachesVideos__tail {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ConvoAttachesVideos__duration {
+  height: 18px;
+  max-width: calc(100% - 8px);
+  padding: 2px 4px;
+  font-size: 11px;
+  line-height: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff; /* @TODO: correct token */
+  background: rgba(0, 0, 0, 0.56); /* @TODO: correct token */
+  border-radius: 4px;
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+}
+
+.ConvoAttachesVideo__title {
+  color: var(--text_link);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ConvoAttachesVideo__views {
+  color: var(--text_secondary);
+  font-size: 13px;
+}
+
+.OptimizedSpinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.MEConfig *,
+.MEConfig *::before,
+.MEConfig *::after {
+  box-sizing: border-box;
+}
+
+.MEConfig * {
+  scrollbar-width: none;
+}
+
+/**
+* Итоговый селектор не имеет веса, поэтому перекроет только браузерные стили
+*/
+
+@supports selector(A:where(B)) {
+  :where(.MEConfig) * {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/**
+* Без поддержки :where селектор без веса сгененерировать ресет под классом
+* без высокой специфичности не получится.
+* Универсальные селекторы менее специфичны, чем селекторы с тегами,
+* но если стили ресета подключатся после основных, то все равно отработают.
+* Поэтому выбираем более специфичные селекторы, но ограничиваем список элементов,
+* чтобы с меньшей вероятности задеть более частые элементы
+*/
+
+@supports not (selector(A:where(B))) {
+  .MEConfig p,
+  .MEConfig ul,
+  .MEConfig ol,
+  .MEConfig h1,
+  .MEConfig h2,
+  .MEConfig h3,
+  .MEConfig h4,
+  .MEConfig h5,
+  .MEConfig h6,
+  .MEConfig figure {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.MEConfig img {
+  max-width: 100%;
+  aspect-ratio: attr(width) / attr(height);
+}
+
+@supports selector(A:where(B)) {
+  :where(.MEConfig img[height]) {
+    height: auto;
+  }
+}
+
+@supports not (selector(A:where(B))) {
+  .MEConfig img[height] {
+    height: auto;
+  }
+}
+
+.MEConfig {
+  --fcZIndex: 1500;
+  --basefont: -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue',
+    Geneva, 'Noto Sans Armenian', 'Noto Sans Bengali', 'Noto Sans Cherokee',
+    'Noto Sans Devanagari', 'Noto Sans Ethiopic', 'Noto Sans Georgian',
+    'Noto Sans Hebrew', 'Noto Sans Kannada', 'Noto Sans Khmer', 'Noto Sans Lao',
+    'Noto Sans Osmanya', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Noto Sans Thai',
+    sans-serif, Arial, Tahoma, verdana;
+  --font: var(--palette-vk-font, var(--basefont));
+  -webkit-font-smoothing: subpixel-antialiased;
+  font-family: var(--font);
+}
+
+.MEConfig *::-webkit-scrollbar {
+  display: none;
+}
+
+.MEConfig .simplebar-scrollbar::before {
+  background-color: var(--icon_tertiary);
+  width: 6px;
+  border-radius: 3px;
+}
+
+.MEApp {
+  --historyPaddingRight: 30px;
+  --historyPaddingBottom: 40px;
+  --historyPaddingLeft: 20px;
+  --messageFontSize: 16px;
+  --messageLineHeight: 20px;
+  --messageMaxWidth: 75%;
+  --messageVerticalIndent: 8px;
+  --messageHorizontalIndent: 12px;
+  --messageBorderRadius: 16px;
+  --messageAttachmentIndent: 5px;
+  --messageKeyboardIndent: 8px;
+  --messageDateFontSize: 11px;
+  --messageDateLineHeight: 12px;
+  --messageDateMarginLeft: 8px;
+  --attachArticleBorderRadius: 6px;
+  --attachArticleWidth: min(100%, 500px);
+}
+
+.FCApp,
+.SAKApp {
+  --historyPadding: 0 16px 12px 8px;
+  --historyPaddingRight: 16px;
+  --historyPaddingBottom: 30px;
+  --historyPaddingLeft: 8px;
+  --messageFontSize: 13px;
+  --messageLineHeight: 16px;
+  --messageMaxWidth: 260px;
+  --messageVerticalIndent: 7px;
+  --messageHorizontalIndent: 10px;
+  --messageBorderRadius: 14px;
+  --messageAttachmentIndent: 4px;
+  --messageKeyboardIndent: 8px;
+  --messageDateFontSize: 9px;
+  --messageDateLineHeight: 10px;
+  --messageDateMarginLeft: 3px;
+  --attachArticleBorderRadius: 6px;
+  --attachArticleWidth: min(100%, 500px);
+}
+
+[data-simplebar]{position:relative;flex-direction:column;flex-wrap:wrap;justify-content:flex-start;align-content:flex-start;align-items:flex-start}.simplebar-wrapper{overflow:hidden;width:inherit;height:inherit;max-width:inherit;max-height:inherit}.simplebar-mask{direction:inherit;position:absolute;overflow:hidden;padding:0;margin:0;left:0;top:0;bottom:0;right:0;width:auto!important;height:auto!important;z-index:0}.simplebar-offset{direction:inherit!important;box-sizing:inherit!important;resize:none!important;position:absolute;top:0;left:0;bottom:0;right:0;padding:0;margin:0;-webkit-overflow-scrolling:touch}.simplebar-content-wrapper{direction:inherit;box-sizing:border-box!important;position:relative;display:block;height:100%;width:auto;max-width:100%;max-height:100%;scrollbar-width:none;-ms-overflow-style:none}.simplebar-content-wrapper::-webkit-scrollbar,.simplebar-hide-scrollbar::-webkit-scrollbar{width:0;height:0}.simplebar-content:after,.simplebar-content:before{content:' ';display:table}.simplebar-placeholder{max-height:100%;max-width:100%;width:100%;pointer-events:none}.simplebar-height-auto-observer-wrapper{box-sizing:inherit!important;height:100%;width:100%;max-width:1px;position:relative;float:left;max-height:1px;overflow:hidden;z-index:-1;padding:0;margin:0;pointer-events:none;flex-grow:inherit;flex-shrink:0;flex-basis:0}.simplebar-height-auto-observer{box-sizing:inherit;display:block;opacity:0;position:absolute;top:0;left:0;height:1000%;width:1000%;min-height:1px;min-width:1px;overflow:hidden;pointer-events:none;z-index:-1}.simplebar-track{z-index:1;position:absolute;right:0;bottom:0;pointer-events:none;overflow:hidden}[data-simplebar].simplebar-dragging .simplebar-content{pointer-events:none;user-select:none;-webkit-user-select:none}[data-simplebar].simplebar-dragging .simplebar-track{pointer-events:all}.simplebar-scrollbar{position:absolute;left:0;right:0;min-height:10px}.simplebar-scrollbar:before{position:absolute;content:'';background:#000;border-radius:7px;left:2px;right:2px;opacity:0;transition:opacity .2s .5s linear}.simplebar-hover .simplebar-scrollbar:before,.simplebar-mouse-entered .simplebar-scrollbar:before,.simplebar-scrolling .simplebar-scrollbar:before{opacity:.5;transition-delay:0s;transition-duration:0s}.simplebar-scrollbar.simplebar-visible:before{opacity:.5;transition-delay:0s;transition-duration:0s}.simplebar-track.simplebar-vertical{top:0;width:11px}.simplebar-scrollbar:before{top:2px;bottom:2px;left:2px;right:2px}.simplebar-track.simplebar-horizontal{left:0;height:11px}.simplebar-track.simplebar-horizontal .simplebar-scrollbar{right:auto;left:0;top:0;bottom:0;min-height:0;min-width:10px;width:auto}[data-simplebar-direction=rtl] .simplebar-track.simplebar-vertical{right:auto;left:0}.simplebar-dummy-scrollbar-size{direction:rtl;position:fixed;opacity:0;visibility:hidden;height:500px;width:500px;overflow-y:hidden;overflow-x:scroll;-ms-overflow-style:scrollbar!important}.simplebar-dummy-scrollbar-size>div{width:200%;height:200%;margin:10px 0}.simplebar-hide-scrollbar{position:fixed;left:0;visibility:hidden;overflow-y:scroll;scrollbar-width:none;-ms-overflow-style:none}
+
+.SettingsApp {
+}
+
+.Settings {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  position: relative;
+  z-index: 0; /* stack context for children */
+}
+
+.Settings__loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: var(--background_content);
+  z-index: 2;
+}
+
+.Settings__switch {
+  margin: 0 10px;
+}
+
+.Settings__button {
+  background: none;
+  border: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text_link);
+  padding: 4px 0;
+  opacity: 1;
+  transition: opacity 0.05s;
+}
+
+.Settings__button:hover,
+.Settings__button:focus {
+  opacity: 0.7;
+}
+
+.Settings__buttonChevron {
+  margin-left: 4px;
+  margin-bottom: -2px;
+  color: var(--icon_tertiary);
+}
+
+/* VKUI overrides */
+
+.Settings__select .PopoutRoot--absolute .vkuiActionSheet {
+  top: 100% !important;
+  right: 0;
+  left: auto !important;
+  padding: 4px 0;
+}
+
+.Settings__select
+  .vkuiActionSheetItem--withSubtitle
+  .vkuiActionSheetItem__container {
+  padding: 8px 0;
+}
+
+.Settings__select .vkuiActionSheetItem--vkcom {
+  padding: 0 12px;
+}
+
+.Settings__select .vkuiActionSheetItem__marker,
+.Settings__select .vkuiActionSheetItem__marker .Icon--done_24,
+.Settings__select .vkuiActionSheetItem__marker svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.Settings__select .vkuiText--vkcom {
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.Settings__select .vkuiCaption--vkcom {
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.SettingsListItem {
+  display: flex;
+  align-items: flex-start;
+  min-height: 28px;
+  padding: 16px 0;
+}
+
+.SettingsListItem__icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin-right: 12px;
+}
+
+.SettingsListItem__info {
+  margin-right: auto;
+  min-height: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.SettingsListItem__title {
+  font-size: 13px;
+  line-height: 16px;
+  color: var(--text_primary);
+}
+
+.SettingsListItem__description {
+  font-size: 12px;
+  line-height: 14px;
+  color: var(--text_secondary);
+  margin-top: 4px;
+}
+
+.SettingsListItem__control {
+  flex-shrink: 0;
+  min-height: inherit;
+  display: flex;
+  align-items: center;
+  margin-left: 24px;
+}
+
+.SettingsListItem + .SettingsListItem {
+  border-top: 1px solid var(--separator_alternate);
+}
+
+.ContactList {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  background: var(--background_content);
+}
+
+.ContactList__search {
+  --contactSearchPadding: 16px;
+  --contactSearchIconSpacer: 34px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.ContactList__searchIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--contactSearchIconSpacer);
+  position: absolute;
+  left: var(--contactSearchPadding);
+  color: var(--icon_outline_secondary);
+  pointer-events: none;
+}
+
+.ContactList__searchInput {
+  background: transparent;
+  width: 100%;
+  height: 50px;
+  padding: 0 var(--contactSearchPadding) 0
+    calc(var(--contactSearchPadding) + var(--contactSearchIconSpacer));
+  border-width: 0 0 1px 0;
+  border-color: var(--separator_common);
+  outline: none;
+  color: var(--text_primary);
+}
+
+.ContactList__searchInput::placeholder {
+  color: var(--text_placeholder);
+}
+
+.ContactList__contacts {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+
+.ContactList__item {
+  display: flex;
+  align-items: center;
+  padding: 0 25px;
+  position: relative;
+  cursor: pointer;
+  height: 56px;
+}
+
+.ContactList__item::after {
+  content: '';
+  height: 1px;
+  left: 25px;
+  right: 25px;
+  bottom: 0;
+  position: absolute;
+  background: var(--separator_common);
+}
+
+.ContactList__item:hover {
+  background: var(--background_hover);
+}
+
+.ContactList__avatar {
+  flex-shrink: 0;
+}
+
+.ContactList__name {
+  margin-left: 10px;
+  font-weight: 500;
+  color: var(--text_link);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ContactList__noResults {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+
+  color: var(--text_subhead);
+}
+
+.ContactList__loader {
+  align-self: center;
+}
+
+.MEAvatar {
+  position: relative;
+  text-align: center;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.MEAvatar__imgWrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  z-index: 0; /* stack for activity indicator */
+}
+
+.MEAvatar__img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.MEAvatar__activityIndicator,
+.MEAvatar__imgWrapper::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+}
+
+.MEAvatar__activityIndicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff; /* @TODO: correct token */
+  z-index: 1; /* pops indicator on top of underlay */
+}
+
+/* animatable underlay for indicator */
+
+.MEAvatar__imgWrapper::after {
+  content: '';
+  background: rgba(0, 0, 0, 0.4); /* @TODO: correct token */
+  opacity: 0;
+  transition: opacity 0.14s ease;
+}
+
+.MEAvatar--withActivity .MEAvatar__imgWrapper::after {
+  opacity: 1;
+}
+
+.MEAvatar__svg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  visibility: visible;
+}
+
+.MEAvatar__shadow {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.08); /* @TODO: correct token */
+  stroke-width: 2px;
+}
+
+.MEAvatar__me {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 10px;
+  height: 10px;
+  fill: #0077ff; /* @TODO: correct token */
+}
+
+.MEAvatar--size-24 .MEAvatar__me,
+.MEAvatar--size-32 .MEAvatar__me {
+  right: 0;
+  bottom: 0;
+}
+
+.MEAvatar__mobile {
+  color: #4bb34b; /* @TODO: correct token -- designers */
+  position: absolute;
+  right: 3px;
+  bottom: 1px;
+}
+
+.MEAvatar--size-40 .MEAvatar__mobile {
+  right: 2px;
+}
+
+.MEAvatar--size-32 .MEAvatar__mobile {
+  right: 1px;
+  bottom: -1px;
+}
+
+.MEAvatar--size-24 .MEAvatar__mobile {
+  right: 0;
+  bottom: -1px;
+}
+
+.MEAvatar__online {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  background-color: #4bb34b; /* @TODO: correct token -- designers */
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.MEAvatar--size-32 .MEAvatar__online {
+  right: 1px;
+  bottom: 1px;
+}
+
+.MEAvatar--size-24 .MEAvatar__online {
+  right: 0;
+  bottom: 0;
+}
+
+.MEAvatar__call {
+  position: absolute;
+  top: 1px;
+  right: -3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #50c750, #32b332);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.MEAvatar--emptyCall .MEAvatar__call {
+  background: linear-gradient(135deg, #b1b6bd, #99a2ad);
+}
+
+.MEAvatar--size-40 .MEAvatar__call,
+.MEAvatar--size-32 .MEAvatar__call {
+  top: 0;
+}
+
+.MEAvatar__callIcon {
+  width: 10px;
+  height: 10px;
+  fill: #fff; /* @TODO: correct token */
+}
+
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance: none) {
+    .MEAvatar {
+      transform: translate3d(0, 0, 0); /* Хак для сафари */
+    }
+  }
+}
+
+.AvatarNoPhoto {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff; /* @TODO: correct token */
+  border-radius: 50%;
+  font: 600 18px/16px var(--font);
+}
+
+.AvatarNoPhoto--color-0 {
+  background: radial-gradient(circle at center 0px, #ff6952, #e6404b);
+}
+
+.AvatarNoPhoto--color-1 {
+  background: radial-gradient(circle at center 0px, #ffb829, #fa7f14);
+}
+
+.AvatarNoPhoto--color-2 {
+  background: radial-gradient(circle at center 0px, #ffdc50, #f2b40b);
+}
+
+.AvatarNoPhoto--color-3 {
+  background: radial-gradient(circle at center 0px, #78e070, #46b864);
+}
+
+.AvatarNoPhoto--color-4 {
+  background: radial-gradient(circle at center 0px, #78f1fa, #46bddb);
+}
+
+.AvatarNoPhoto--color-5 {
+  background: radial-gradient(circle at center 0px, #e664fa, #a73ddb);
+}
+
+.AvatarNoPhoto--color-contact {
+  background: radial-gradient(circle at center 0px, #66ccff, #3f8ae0);
+}
+
+.AvatarNoPhoto--color-ext {
+  background: radial-gradient(circle at center 0px, #bac2cc, #8c97a3);
+}
+
+.AvatarNoPhoto--size-24 {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+  line-height: 15px;
+}
+
+.AvatarNoPhoto--size-32 {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.AvatarNoPhoto--size-34 {
+  width: 34px;
+  height: 34px;
+  font-size: 12px;
+  line-height: 15px;
+}
+
+.AvatarNoPhoto--size-40 {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+}
+
+.AvatarNoPhoto--size-44 {
+  width: 44px;
+  height: 44px;
+  font-size: 15px;
+}
+
+.AvatarNoPhoto--size-46 {
+  width: 46px;
+  height: 46px;
+  font-size: 16px;
+}
+
+.AvatarNoPhoto--size-48 {
+  width: 48px;
+  height: 48px;
+  font-size: 16px;
+}
+
+.AvatarNoPhoto--size-50 {
+  width: 50px;
+  height: 50px;
+  font-size: 17px;
+}
+
+.AvatarNoPhoto--size-56 {
+  width: 56px;
+  height: 56px;
+  font-size: 17px;
+}
+
+.AvatarNoPhoto--size-64 {
+  width: 64px;
+  height: 64px;
+  font-size: 19px;
+}
+
+.AvatarNoPhoto--size-72 {
+  width: 72px;
+  height: 72px;
+  font-size: 26px;
+}
+
+.AvatarNoPhoto--size-80 {
+  width: 80px;
+  height: 80px;
+  font-size: 28px;
+}
+
+.AvatarNoPhoto--size-100 {
+  width: 100px;
+  height: 100px;
+  font-size: 34px;
+}
+
+.AvatarNoPhoto--size-160 {
+  width: 160px;
+  height: 160px;
+  font-size: 54px;
+}
+
+.AvatarNoPhoto--size-200 {
+  width: 200px;
+  height: 200px;
+  font-size: 67px;
+}
+

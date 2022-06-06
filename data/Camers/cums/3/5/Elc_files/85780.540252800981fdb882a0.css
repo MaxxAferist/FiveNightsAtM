@@ -1,0 +1,1476 @@
+﻿.FCApp {
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  z-index: var(--fcZIndex);
+}
+
+.FCApp__convoStub,
+.FCApp__thumbStub {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.FCApp__thumbStub {
+  min-height: 52px; /* @TODO */
+}
+
+.FCPanel {
+  --add-height: 36px;
+  --collapse-hover-delay: 0.15s;
+  --collapse-duration: 0.24s;
+  position: fixed;
+  right: 26px;
+  bottom: 0;
+  width: 52px;
+  isolation: isolate;
+}
+
+.FCPanel__widthToggle {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: 0;
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  z-index: 1; /* overrides collapse force field */
+}
+
+.FCPanel__widthToggleIcon {
+  width: 20px;
+  height: 20px;
+  fill: var(--icon_outline_secondary);
+  animation-name: meFCEWidthToggle;
+  animation-iteration-count: 1;
+  animation-duration: 0.3s;
+  animation-fill-mode: backwards;
+  animation-direction: reverse;
+}
+
+/* перезапускает анимацию */
+
+.FCPanel__widthToggle:active .FCPanel__widthToggleIcon {
+  animation-name: none;
+}
+
+.FCPanel__widthToggle:hover,
+.FCPanel__widthToggle:focus {
+  opacity: 1;
+}
+
+.FCPanel__widthToggle:focus {
+  outline: none;
+}
+
+.FCPanel__list {
+  background: var(--background_content);
+  box-shadow: 0 0 0 1px var(--separator_alternate);
+  border-radius: 8px 8px 0 0;
+  padding-bottom: var(--add-height);
+  transform: translateY(0);
+  transition: transform var(--collapse-duration) ease-in;
+}
+
+.FCPanel__add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--add-height);
+  background: var(--background_content);
+  border: 0;
+  position: absolute;
+  bottom: 0;
+  outline: none;
+  color: var(--icon_outline_medium);
+  cursor: pointer;
+  z-index: 0;
+}
+
+/* используем вместо непрозрачной заливки */
+
+.FCPanel__add::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: inherit;
+  background: transparent;
+  transition: background 0.2s ease, opacity 0.2s;
+  z-index: -1;
+}
+
+.FCPanel__add:hover::before,
+.FCPanel__add:focus::before {
+  background: var(--background_hover);
+}
+
+.FCPanel__list:empty + .FCPanel__add {
+  border-radius: 8px 8px 0 0;
+}
+
+.FCPanel__addIcon {
+  opacity: 0.7;
+  animation-name: meFCListOpenToggle;
+  animation-duration: 0.16s;
+  animation-iteration-count: 1;
+}
+
+.FCPanel__add:hover .FCPanel__addIcon,
+.FCPanel__add:focus .FCPanel__addIcon {
+  opacity: 1;
+}
+
+.FCPanel__add {
+  font-family: inherit;
+}
+
+.FCPanel__addText {
+  font-size: 12.5px;
+  line-height: 16px;
+  color: var(--text_secondary);
+}
+
+/* Режим открытого списка */
+
+/* перезапускает анимацию */
+
+.FCPanel__add:active .FCPanel__addIcon {
+  animation-name: none;
+  transform: scale(0.7);
+  opacity: 0.15;
+  transition-duration: 0.1s;
+}
+
+@keyframes meFCListOpenToggle {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.15;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Развернутый режим */
+
+.FCPanel--wide {
+  width: 148px;
+}
+
+.FCPanel--wide .FCPanel__widthToggleIcon {
+  animation-fill-mode: forwards;
+  animation-direction: normal;
+  transform: scaleX(-1) translateX(0);
+}
+
+.FCPanel--wide .FCPanel__add {
+  justify-content: flex-start;
+}
+
+.FCPanel--wide .FCPanel__addIcon {
+  margin: 0 10px 0 18px;
+}
+
+@keyframes meFCEWidthToggle {
+  0% {
+    transform: scaleX(1) translateX(0);
+  }
+  50% {
+    transform: scaleX(1) translateX(-12px);
+    opacity: 0.1;
+  }
+  50.1% {
+    transform: scaleX(-1) translateX(-12px);
+    opacity: 0.1;
+  }
+  100% {
+    transform: scaleX(-1) translateX(0);
+  }
+}
+
+/* Свернутый режим */
+
+.FCPanel--collapsed {
+  pointer-events: none;
+}
+
+/* Вручную управляем интерактивными областями в свернутом режиме,
+ * так как трансформ оставляет родителя на месте */
+
+.FCPanel--collapsed .FCPanel__widthToggle,
+.FCPanel--collapsed .FCPanel__list,
+.FCPanel--collapsed .FCPanel__add {
+  pointer-events: auto;
+}
+
+/* Сворачиваем башню */
+
+.FCPanel--collapsed .FCPanel__list {
+  transform: translateY(calc(100% - var(--add-height)));
+  transition-timing-function: ease-out;
+}
+
+/* Дополнительный задел высотой в один элемент,
+ * ловит ховер на список и предотвращает сворачивание панельки
+ * при удалении первого элемента списка в свернутом режиме
+ */
+
+.FCPanel--collapsed .FCPanel__list::before {
+  position: absolute;
+  bottom: 100%;
+  width: 100%;
+  padding-top: 100%; /* считаем, что элемент списка квадратный */
+  z-index: -1;
+}
+
+.FCPanel--collapsed .FCPanel__list:hover::before {
+  content: '';
+}
+
+/* Тьюнинг задержки скругления уголков на разворачивании */
+
+.FCPanel--collapsed .FCPanel__add {
+  transition: border-radius 0s ease calc(var(--collapse-hover-delay) + 0.01s);
+}
+
+/* Тьюнинг задержки скругления уголков на сворачивании */
+
+.FCPanel--collapsed:not(:hover) .FCPanel__add {
+  border-radius: 8px 8px 0 0;
+  transition-delay: 0.05s;
+}
+
+/* Разворачиваем по ховеру, но с небольшой защитой от проведения мимо */
+
+.FCPanel--collapsed:hover .FCPanel__list {
+  transform: translateY(0);
+  transition-delay: var(--collapse-hover-delay);
+}
+
+/* Показываем экспандер после анимации башни */
+
+.FCPanel--collapsed:hover .FCPanel__widthToggle {
+  transition-delay: calc(
+    var(--collapse-hover-delay) + var(--collapse-duration)
+  );
+}
+
+/* Прячем экспандер перед башней */
+
+.FCPanel--collapsed:not(:hover) .FCPanel__widthToggle {
+  opacity: 0;
+  pointer-events: none;
+  transition-delay: 0s;
+}
+
+.FCThumb {
+  --fc-convo-item-bg: var(--background_content);
+  position: relative;
+  background: var(--fc-convo-item-bg);
+  transition: background 0.2s ease;
+}
+
+.FCThumb:focus,
+.FCThumb:hover {
+  --fc-convo-item-bg: var(--background_hover);
+}
+
+.FCThumb.FCThumb--selected {
+  --fc-convo-item-bg: var(--background_highlighted);
+}
+
+.FCThumb:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.FCThumb__link,
+.FCThumb__link:hover {
+  display: flex;
+  padding: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 16px;
+  background: none;
+  border: 0;
+  width: 100%;
+}
+
+.FCThumb__unread {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 1;
+  background: var(--counter_prominent_background);
+  color: var(--counter_prominent_text);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.FCThumb__unread--blue {
+  background: var(--counter_primary_background);
+  color: var(--counter_primary_text);
+}
+
+.FCThumb__title {
+  margin-left: 8px;
+  align-self: center;
+}
+
+.FCThumb__archiveIcon {
+  position: absolute;
+}
+
+.FCThumb__close {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background: transparent;
+  outline: none;
+  border: 0;
+  opacity: 0;
+  z-index: 1;
+}
+
+.FCThumb:hover .FCThumb__close {
+  opacity: 1;
+}
+
+.FCThumb--collapsed .FCThumb__close {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 5px;
+  right: 4px;
+  color: var(--counter_prominent_text); /* @TODO: correct token */
+  background: rgba(0, 0, 0, 0.56); /* @TODO: correct token */
+  border-radius: 50%;
+  transition: opacity 0.14s ease, background 0.14s ease;
+}
+
+.FCThumb--collapsed .FCThumb__close::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: -4px;
+  bottom: 0;
+  left: 0;
+  max-width: initial; /* @TODO discuss global override */
+}
+
+.FCThumb--collapsed .FCThumb__close:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.FCThumb--wide .FCThumb__close {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 8px;
+  top: 16px;
+  background: var(--background_content) /* красим подложку */;
+  color: var(--icon_secondary);
+  box-shadow: -7px 0 10px 8px var(--fc-convo-item-bg) /* красим затенение */,
+    -7px 0 10px 8px var(--background_content) /* красим затенение */,
+    inset 0 0 0 20px var(--fc-convo-item-bg) /* красим подложку */;
+  transition: opacity 0.14s ease, box-shadow 0.2s ease;
+}
+
+.FCThumb--wide .FCThumb__close > * {
+  opacity: 0.7;
+  transition: opacity 0.14s ease;
+}
+
+.FCThumb--wide .FCThumb__close:hover > * {
+  opacity: 1;
+}
+
+.FCConvoList__loader {
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon_tertiary);
+}
+
+.FCConvoList__virtual {
+  overscroll-behavior: none;
+}
+
+.FCConvoList__simplebar {
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+}
+
+.FCConvoList__selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding-right: 14px;
+}
+
+.FCConvoListButton {
+  border: none;
+  background: none;
+}
+
+.FCConvoListButton:hover {
+  cursor: pointer;
+}
+
+.FCConvoListButton__icon {
+  color: var(--icon_outline_medium);
+  opacity: 0.72;
+}
+
+.FCConvoListButton__icon--active {
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* Компонент FCFriendsListButton */
+
+.FCFriendsListButton {
+  margin-right: 10px;
+}
+
+.FCFriendsList__loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+}
+
+.FCFriendsList__list--empty .FCFriendsList__loader {
+  height: 373px;
+}
+
+.FCFriendsList__simplebar {
+  width: 100%;
+  height: 373px;
+}
+
+.FCFriendsList__list {
+  overflow-x: hidden;
+}
+
+/* Компонент LoadingError */
+
+.FCFriendsListLoadingError {
+  width: 160px;
+}
+
+.FCUserListItem {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px 6px 8px;
+  cursor: pointer;
+  border: 0;
+  width: 100%;
+  background: transparent;
+  text-align: left;
+  font: 500 13px/16px var(--font);
+  max-width: 100%;
+  overflow: hidden;
+  transition: background-color 0.2s ease;
+  grid-template-columns: auto 1fr auto;
+  flex: 0 0 auto;
+}
+
+.FCUserListItem:hover,
+.FCUserListItem[aria-selected='true'] {
+  background: var(--content_tint_background);
+  outline: none;
+}
+
+.FCUserListItem--focused,
+.FCUserListItem:focus {
+  outline: none;
+  background: var(--content_tint_background);
+}
+
+.FCUserListItem__photo {
+  margin-right: 8px;
+}
+
+.IconNote {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  font: 13px/16px var(--font);
+  flex: 1 0 auto;
+}
+
+.IconNote__content {
+  margin: 16px 0 0 0;
+  color: var(--content_placeholder_text);
+}
+
+.IconNote__actions {
+  margin-top: 12px;
+}
+
+.IconNote__icon {
+  color: var(--content_placeholder_icon);
+}
+
+.FCWindow {
+  --border-radius: 8px;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  background: var(--background_content);
+  box-shadow: 0 1px 0 var(--separator_alternate),
+    0 0 0 1px var(--separator_alternate), 0 0 2px rgba(0, 0, 0, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.08);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  animation: FCWindow__in 0.2s ease;
+}
+
+.FCWindow--blocked::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: inherit;
+  background: transparent;
+}
+
+.FCWindow--active {
+  z-index: 1;
+}
+
+.FCWindow__header {
+  display: flex;
+  align-items: center;
+  height: var(--convoHeaderHeight);
+  border-bottom: 1px solid var(--separator_alternate);
+  border-radius: 8px 8px 0 0;
+  background-color: var(--background_content);
+  flex: 0 0 44px;
+}
+
+/**
+ * Повышаем специфичность, чтобы перебить 011 ([dir] h1) в vkcom
+ */
+
+.FCWindow__title.FCWindow__title {
+  margin: 0;
+  padding: 10px;
+  flex: 1 1 auto;
+  font: 500 13px/16px var(--font);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: grab;
+  user-select: none;
+  color: var(--text_primary);
+}
+
+.FCWindow--dragging .FCWindow__title {
+  cursor: grabbing;
+}
+
+.FCWindow__actions {
+  flex: 0 0 auto;
+  padding-right: 6px;
+}
+
+/* change to gap when we drop safari < 14 support */
+
+.FCWindow__actions > :nth-child(n + 2) {
+  margin-left: 4px;
+}
+
+.FCWindow__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow: auto;
+  overscroll-behavior: none;
+}
+
+.FCWindow__footer {
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--separator_alternate);
+}
+
+.FCWindow--rounded {
+  border-radius: var(--border-radius);
+}
+
+@keyframes FCWindow__in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.FCIconButton {
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--icon_medium);
+  opacity: 0.72;
+  transition: color 0.14s ease;
+}
+
+.FCIconButton:hover,
+.FCIconButton:focus {
+  opacity: 1;
+}
+
+.FCSearch {
+  position: relative;
+  width: 100%;
+  color: var(--icon_outline_secondary);
+}
+
+.FCSearch__icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  margin-top: -8px;
+  pointer-events: none;
+}
+
+.FCSearch__input.FCSearch__input {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font: 15px/20px var(--font);
+  padding: 0 34px;
+  outline: none;
+  color: var(--text_primary);
+  line-height: 43px;
+}
+
+.FCSearch__input::placeholder {
+  color: var(--text_tertiary);
+}
+
+.FCConvoListItem {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px 6px 8px;
+  cursor: pointer;
+  border: 0;
+  width: 100%;
+  background: transparent;
+  text-align: left;
+  font: 500 13px/16px var(--font);
+  max-width: 100%;
+  overflow: hidden;
+  transition: background-color 0.2s ease;
+  grid-template-columns: auto 1fr auto;
+  flex: 0 0 auto;
+}
+
+.FCConvoListItem:hover,
+.FCConvoListItem[aria-selected='true'] {
+  background: var(--content_tint_background);
+  outline: none;
+}
+
+.FCConvoListItem--focused,
+.FCConvoListItem:focus {
+  outline: none;
+  background: var(--content_tint_background);
+}
+
+.FCConvoListItem__photo {
+  margin-right: 8px;
+}
+
+.FCConvoListItem__icons {
+  flex: 0 0 auto;
+  display: grid;
+  grid-auto-flow: column;
+  column-gap: 2px;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.FCConvoListItem__unreadOut {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  background: var(--counter_primary_background);
+}
+
+.FCConvoListItem--archived .FCConvoListItem__unreadOut,
+.FCConvoListItem--muted .FCConvoListItem__unreadOut {
+  background: var(--counter_secondary_background);
+  color: var(--counter_secondary_text);
+}
+
+.FCConvoListItem__mentionIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 18px;
+  width: 18px;
+  border-radius: 10px;
+  background: var(--counter_primary_background);
+  color: var(--counter_primary_text);
+  margin-right: 3px;
+}
+
+.FCConvoListItem__bombIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 18px;
+  width: 18px;
+  border-radius: 10px;
+  background: var(--counter_primary_background);
+  color: var(--counter_primary_text);
+  margin-right: 3px;
+}
+
+.FCConvoListItem--archived .FCConvoListItem__bombIcon,
+.FCConvoListItem--muted .FCConvoListItem__bombIcon {
+  background: var(--counter_secondary_background);
+  color: var(--counter_secondary_text);
+}
+
+.FCConvoListItem__pinIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 18px;
+  width: 18px;
+  color: var(--counter_secondary_background);
+}
+
+.FCConvoListItem__archiveIcon {
+  position: absolute;
+}
+
+.FCConvo {
+  font: 500 13px/16px var(--font);
+
+  --convoHeaderHeight: 44px;
+}
+
+.FCConvo__header {
+  display: flex;
+  align-items: center;
+  height: var(--convoHeaderHeight);
+}
+
+.FCConvo__title {
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 0 8px;
+}
+
+.FCConvo__banners {
+  width: 100%;
+}
+
+.FCConvo__content {
+  height: 100%;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.FCConvo__spinner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.SimpleComposer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  font: 13px / 16px var(--font);
+}
+
+.SimpleComposer__editing {
+  width: 100%;
+}
+
+.SimpleComposer__field {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  place-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+/*
+  На vk.com выше специфичность селектора, но влезать в стили на vk.com рискованно,
+  и поэтому поднимаем специфичность селектора здесь без риска влияния на приложение
+ */
+
+.SimpleComposer__input.SimpleComposer__input.SimpleComposer__input {
+  border: 0;
+  border-radius: 0;
+  padding: 10px 4px;
+  width: 100%;
+  max-height: 140px;
+  overflow: auto;
+}
+
+.SimpleComposer__input:empty::before {
+  content: attr(placeholder);
+  color: var(--text_placeholder);
+}
+
+.SimpleComposer__input::empty:focus::before {
+  content: '';
+}
+
+.SimpleComposer__input:focus {
+  outline: none;
+}
+
+.SimpleComposer__button {
+  outline: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--icon_outline_secondary);
+  opacity: 0.72;
+}
+
+.SimpleComposer__button:hover {
+  opacity: 1;
+}
+
+.SimpleComposer__keyboard {
+  opacity: 0.7;
+  will-change: opacity;
+  transition: opacity 0.14s ease;
+}
+
+.SimpleComposer__keyboard:hover {
+  opacity: 1;
+}
+
+.FCComposer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.FCComposer__stickersPanel {
+  border-bottom: 1px solid var(--separator_common);
+  margin-top: -1px;
+}
+
+.FCComposer__field {
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+}
+
+.FCComposer__smile {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  right: 0;
+}
+
+.FCComposer__button {
+  outline: none;
+  flex: 0 0 35px;
+  width: 35px;
+  height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--icon_outline_secondary);
+}
+
+.FCComposer__keyboard {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  right: 34px;
+  opacity: 0.7;
+  will-change: opacity;
+  transition: opacity 0.14s ease;
+}
+
+.FCComposer__keyboard:hover {
+  opacity: 1;
+}
+
+.FCComposer__attaches {
+  border-top: 1px solid var(--separator_alternate);
+}
+
+/**
+ * Перебиваем специфичность 021 в vkcom ([dir] div[contenteditable=true])
+ */
+
+.FCComposer__input.FCComposer__input.FCComposer__input,
+.FCComposer__input.FCComposer__input.FCComposer__input
+  ~ .placeholder
+  .ph_input {
+  border: 0;
+  border-radius: 0;
+  padding: 13px 70px 14px 0;
+  max-height: 140px;
+  overflow: auto;
+  font-weight: 400;
+}
+
+.FCComposer__input:focus {
+  outline: none;
+}
+
+.FCComposer__input.FCComposer__input.FCComposer__input
+  ~ .placeholder
+  .ph_content {
+  padding: 0;
+}
+
+.FCComposer__smile.FCComposer__smile .emoji_tt_wrap {
+  bottom: calc(100% - 4px);
+  right: 3px;
+}
+
+/**
+ * ЖОСКИЕ ХАКИ И КОСТЫЛИ ТУТ
+ */
+
+.FCComposer__input .emoji {
+  /* Без этого не отображается каретка после вставки смайла */
+  color: var(--text_primary);
+}
+
+.FCComposer__emojiHack {
+  flex: 1 1 auto;
+  overflow: hidden;
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.FCComposer__emojiHack .emoji_smile_wrap * {
+  /* Сбрасываем наши ресеттеры */
+  max-width: none;
+  box-sizing: content-box;
+}
+
+.Clip {
+  width: 44px;
+  height: 43px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+  color: var(--icon_outline_secondary);
+  flex: 0 0 43px;
+}
+
+.Clip__dropdown {
+  position: absolute;
+  left: -6px;
+  bottom: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  background: var(--background_content);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 4px 0;
+  max-width: none;
+  animation: fadeIn 0.2s ease;
+  min-width: 120px;
+}
+
+.Clip__button {
+  display: flex;
+  background: transparent;
+  border: 0;
+  height: 32px;
+  padding: 0 20px 0 0;
+  cursor: pointer;
+  outline: none;
+  align-items: center;
+  justify-content: flex-start;
+  font: 13px/16px var(--font);
+  transition: background 0.2s ease;
+}
+
+.Clip__button:hover,
+.Clip__button:focus {
+  background: var(--content_tint_background);
+}
+
+.Clip__buttonIcon {
+  flex: 0 0 38px;
+  width: 38px;
+  color: var(--icon_outline_medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* TODO: Костыль чтобы медиа селектор аттачей не выходил за рамки слева https://jira.mvk.com/browse/ME-26462 */
+
+.Clip .ms_items_more {
+  right: -126px;
+}
+
+/* TODO: Костыль чтобы медиа селектор аттачей не выходил за рамки слева https://jira.mvk.com/browse/ME-26462 */
+
+.Clip .ms_items_more_wrap.to_up .ms_items_more:before,
+.Clip .ms_items_more_wrap.to_down .ms_items_more:before,
+.Clip .ms_items_more_wrap.to_up .ms_items_more:after,
+.Clip .ms_items_more_wrap.to_down .ms_items_more:after {
+  left: 14px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    visibility: hidden;
+  }
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.VKNotifications {
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  row-gap: 8px;
+  font-weight: 400;
+}
+
+.VKNotifications__close-button {
+  color: var(--icon_medium);
+  cursor: pointer;
+  height: 20px;
+}
+
+.VKNotifications__notification {
+  padding: 12px;
+  width: 100%;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.08), 0px 8px 24px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  background-color: var(--background_content);
+  color: var(--text_primary);
+  display: grid;
+  grid-template-columns: auto 20px;
+  word-break: break-all;
+}
+
+.VKNotifications__item-enter {
+  opacity: 0;
+  width: 100%;
+}
+
+.VKNotifications__item-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+
+.VKNotifications__item-exit {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.VKNotifications__item-exit-active {
+  transform: translateY(-44px);
+  opacity: 0;
+  transition: all 500ms ease-in;
+}
+
+.TCLConvoList {
+  --separator-padding-horizontal: 16px;
+  --separator-padding-vertical: 6px;
+  --separator-height: 1px;
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--background_content);
+}
+
+.TCLConvoList__search {
+  position: relative;
+  width: 100%;
+  height: 36px;
+  background: var(--background_content);
+  border-bottom: 1px solid var(--separator_alternate);
+  margin-bottom: 2px;
+}
+
+.TCLConvoList__searchInput {
+  padding: 0 35px;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  color: var(--text_primary);
+  font: 13px/16px var(--font);
+  border: 1px solid transparent;
+}
+
+.TCLConvoList__searchInput:focus {
+  outline: none;
+}
+
+.TCLConvoList__searchInput::-webkit-search-cancel-button {
+  display: none;
+}
+
+.TCLConvoList__searchIcon {
+  position: absolute;
+  left: 11px;
+  top: calc(50% - 9px);
+  color: var(--text_placeholder);
+}
+
+.TCLConvoList__cancelIcon {
+  visibility: hidden;
+  position: absolute;
+  right: 10px;
+  top: calc(50% - 7px);
+  color: var(--text_placeholder);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.TCLConvoList__search--active .TCLConvoList__cancelIcon {
+  visibility: visible;
+}
+
+.TCLConvoList__items {
+  height: 400px;
+  overflow-y: auto;
+  cursor: default;
+  overscroll-behavior: none;
+}
+
+.TCLConvoList__virtual {
+  overscroll-behavior: none;
+}
+
+.TCLConvoList__item--separator {
+  padding-top: calc(
+    2 * var(--separator-padding-vertical) + var(--separator-height)
+  );
+}
+
+.TCLConvoList__item--separator::before {
+  display: block;
+  content: '';
+  height: var(--separator-height);
+  background: var(--separator_common);
+  position: absolute;
+  top: calc(var(--separator-padding-vertical) - var(--separator-height));
+  width: calc(100% - 2 * var(--separator-padding-horizontal));
+  left: var(--separator-padding-horizontal);
+}
+
+.TCLConvoList__loader {
+  padding: 20px 0;
+  height: 100%;
+}
+
+.TCLConvoList__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 12px 13px;
+  width: 100%;
+  border-top: 1px solid var(--separator_alternate);
+}
+
+.TCLConvoList__folder {
+  cursor: pointer;
+  background: inherit;
+  border: 0;
+  font: 13px/15px var(--font);
+  color: var(--button_tertiary_foreground);
+  outline: none;
+}
+
+.TCLConvoList__folder:hover {
+  text-decoration: underline;
+}
+
+.TCLConvoList__showAll {
+  background: inherit;
+  color: var(--button_tertiary_foreground);
+  text-align: center;
+  text-decoration: none;
+  font: 13px/15px var(--font);
+}
+
+.TCLConvoList__showAll:hover {
+  text-decoration: underline;
+}
+
+.TCLConvoListItem {
+  height: 100%;
+  display: grid;
+  align-items: center;
+  grid-template-areas: 'avatar header icons' 'avatar message icons';
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr 1fr;
+  padding: 0 16px 0 10px;
+  transition: background-color 0.2s ease;
+  font: 13px/16px var(--font);
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+}
+
+.TCLConvoListItem:hover {
+  background: var(--background_hover);
+}
+
+.TCLConvoListItem:focus,
+.TCLConvoListItem--selected {
+  background: var(--field_background); /* @TODO Странная переменная */
+  outline: none;
+}
+
+.TCLConvoListItem__avatar {
+  grid-area: avatar;
+  padding-right: 10px;
+}
+
+.TCLConvoListItem__header {
+  grid-area: header;
+  align-self: end;
+  font: 500 13px/17px var(--font);
+  overflow: hidden;
+}
+
+.TCLConvoListItem__message {
+  grid-area: message;
+  align-self: start;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  max-width: 100%;
+  overflow: hidden;
+  margin-top: 2px;
+  text-overflow: ellipsis;
+  color: var(--text_tertiary);
+}
+
+.TCLConvoListItem__typing {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+}
+
+.TCLConvoListItem__typingText {
+  width: min-content;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 0.5ch;
+}
+
+.TCLConvoListItem__typingIndicator {
+  flex-shrink: 0;
+}
+
+.TCLConvoListItem__author {
+  color: var(--text_tertiary);
+}
+
+.TCLConvoListItem__text {
+  flex: 0 1 auto;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: var(--text_subhead);
+}
+
+.TCLConvoListItem__date {
+  flex: 0 0 auto;
+  font: 12px/20px var(--font);
+  color: var(--text_tertiary);
+}
+
+.TCLConvoListItem__icons {
+  grid-area: icons;
+  align-self: center;
+  display: grid;
+  align-items: center;
+  height: 20px;
+  gap: 3px;
+  padding-left: 1ch;
+  grid-template-columns: auto 1fr auto;
+}
+
+.TCLConvoListItem__icons:empty {
+  padding: 0;
+}
+
+.TCLConvoListItem__bombIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 18px;
+  width: 18px;
+  border-radius: 10px;
+  background: var(--counter_primary_background);
+  color: var(--counter_primary_text);
+}
+
+.TopConvoListItem--muted .TopConvoListItem__bombIcon {
+  background: var(--counter_secondary_background);
+  color: var(--counter_secondary_text);
+}
+
+.TCLConvoListItem__mentionIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 18px;
+  width: 18px;
+  border-radius: 10px;
+  background: var(--counter_primary_background);
+  color: var(--counter_primary_text);
+}
+
+.TCLConvoListItem__unreadOut {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  background: var(--counter_primary_background);
+}
+
+.TCLConvoListItem--muted .TCLConvoListItem__unreadOut {
+  background: var(--counter_secondary_background);
+  color: var(--counter_secondary_text);
+}
+
+.TCLConvoListItem__clockIcon {
+  color: var(--counter_secondary_background);
+}
+
+.TCLConvoListItem__pinIcon {
+  color: var(--counter_secondary_background);
+}
+
+.TCLConvoListItem--muted .TCLConvoListItem__pinIcon {
+  color: var(--counter_secondary_background);
+}
+
+.ProfileInfoTTApp__popover--appear {
+  pointer-events: none;
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+.ProfileInfoTTApp__popover--appear-active {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.1s linear 0.2s, transform 0.1s linear 0.2s;
+}
+
+.ProfileInfoTTApp__popover--exit {
+  opacity: 1;
+  transform: none;
+}
+
+.ProfileInfoTTApp__popover--exit-active {
+  transform: translateY(-20px);
+  opacity: 0;
+  transition: opacity 0.1s linear 0.2s, transform 0.1s linear 0.2s;
+}
+
+.Popover {
+  position: absolute;
+}
+
+.Popover--top {
+  padding-bottom: 8px;
+}
+
+.Popover--bottom {
+  padding-top: 8px;
+}
+
+.Popover--left {
+  padding-right: 8px;
+}
+
+.Popover--right {
+  padding-left: 8px;
+}
+
+.Popover__wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+}
+
+.Popover__content {
+  background-color: var(--modal_card_background);
+  border-radius: 8px;
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.32);
+  position: relative;
+}
+
+try{stManager.done('dist/85780.540252800981fdb882a0.css');}catch(e){}

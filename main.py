@@ -11,31 +11,6 @@ import numpy as np
 import pygame.camera
 
 
-
-
-
-class MatrixVision:
-    def __init__(self):
-        self.RES = self.WIDTH, self.HEIGHT = 800, 600
-        pg.init()
-        self.screen = pg.display.set_mode(self.RES)
-        self.surface = pg.Surface(self.RES)
-        self.clock = pg.time.Clock()
-        
-
-    def draw(self):
-        self.surface.fill(pg.Color('black'))
-        self.matrix.run()
-        self.screen.blit(self.surface, (0, 0))
-
-    def run(self):
-        while True:
-            self.draw()
-            [exit() for i in pg.event.get() if i.type == pg.QUIT]
-            pg.display.flip()
-            self.clock.tick(30)
-
-
 pg.init()
 pg.mixer.init()
 FPSVIDEOS = 30
