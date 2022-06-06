@@ -7,6 +7,33 @@ from PIL import Image, ImageEnhance
 import json
 import datetime
 import random
+import numpy as np
+import pygame.camera
+
+
+
+
+
+class MatrixVision:
+    def __init__(self):
+        self.RES = self.WIDTH, self.HEIGHT = 800, 600
+        pg.init()
+        self.screen = pg.display.set_mode(self.RES)
+        self.surface = pg.Surface(self.RES)
+        self.clock = pg.time.Clock()
+        
+
+    def draw(self):
+        self.surface.fill(pg.Color('black'))
+        self.matrix.run()
+        self.screen.blit(self.surface, (0, 0))
+
+    def run(self):
+        while True:
+            self.draw()
+            [exit() for i in pg.event.get() if i.type == pg.QUIT]
+            pg.display.flip()
+            self.clock.tick(30)
 
 
 pg.init()
@@ -47,15 +74,84 @@ def termit():
     sys.exit()
 
 
-def go_game(videos=None):
-    game = Game(videos)
+def go_game(videos=None, light_photos=None):
+    game = Game(videos, light_photos)
     game.run()
-
 
 
 def go_menu():
     menu = Menu()
     menu.run()
+
+
+class Matrix():
+    def __init__(self, app, font_size=8):
+        self.app = app
+        self.FONT_SIZE = font_size
+        self.SIZE = self.ROWS, self.COLS = HEIGHT // font_size, WIDTH // font_size
+        self.katakana = np.array([chr(int('0x30a0', 16) + i)
+                                 for i in range(96)] + ['' for i in range(10)])
+        self.font = pg.font.Font('data/MS Mincho.ttf', font_size, bold=True)
+
+        self.matrix = np.random.choice(self.katakana, self.SIZE)
+        self.char_intervals = np.random.randint(25, 50, size=self.SIZE)
+        self.cols_speed = np.random.randint(1, 500, size=self.SIZE)
+        self.prerendered_chars = self.get_prerendered_chars()
+
+        # self.image = self.get_image('lox.jpg')
+
+    def get_frame(self):
+        image = self.app.cam.get_image()
+        image = pg.transform.scale(image, (WIDTH, HEIGHT))
+        pixel_array = pg.pixelarray.PixelArray(image)
+        return pixel_array
+
+    def get_image(self, path_to_file):
+        image = pg.image.load(path_to_file)
+        image = pg.transform.scale(image, (WIDTH, HEIGHT))
+        pixel_array = pg.pixelarray.PixelArray(image)
+        return pixel_array
+
+    def get_prerendered_chars(self):
+        char_colors = [(0, green, 0) for green in range(256)]
+        prerendered_chars = {}
+        for char in self.katakana:
+            prerendered_char = {(char, color): self.font.render(
+                char, True, color) for color in char_colors}
+            prerendered_chars.update(prerendered_char)
+        return prerendered_chars
+
+    def run(self):
+        frames = pg.time.get_ticks()
+        self.change_chars(frames)
+        self.shift_column(frames)
+        self.draw()
+
+    def shift_column(self, frames):
+        num_cols = np.argwhere(frames % self.cols_speed == 0)
+        num_cols = num_cols[:, 1]
+        num_cols = np.unique(num_cols)
+        self.matrix[:, num_cols] = np.roll(
+            self.matrix[:, num_cols], shift=1, axis=0)
+
+    def change_chars(self, frames):
+        mask = np.argwhere(frames % self.char_intervals == 0)
+        new_chars = np.random.choice(self.katakana, mask.shape[0])
+        self.matrix[mask[:, 0], mask[:, 1]] = new_chars
+
+    def draw(self):
+        self.image = self.get_frame()
+        for y, row in enumerate(self.matrix):
+            for x, char in enumerate(row):
+                if char:
+                    pos = x * self.FONT_SIZE, y * self.FONT_SIZE
+                    _, red, green, blue = pg.Color(self.image[pos])
+                    if red and green and blue:
+                        color = (red + green + blue) // 3
+                        color = 220 if 160 < color < 220 else color
+                        char = self.prerendered_chars[(char, (0, color, 0))]
+                        char.set_alpha(color + 100)
+                        self.app.screen.blit(char, pos)
 
 
 class Menu():
@@ -64,9 +160,9 @@ class Menu():
         self.clock = pg.time.Clock()
         self.all_sprites = pg.sprite.Group()
         fon_image = load_image('menu/menu_fon.png')
-        self.fon = pg.sprite.Sprite(self.all_sprites)
-        self.fon.image = fon_image
-        self.fon.rect = self.fon.image.get_rect()
+        # self.fon = pg.sprite.Sprite(self.all_sprites)
+        # self.fon.image = fon_image
+        # self.fon.rect = self.fon.image.get_rect()
         self.running = True
         self.buttons_sprites = pg.sprite.Group()
         buttons = ['New game', 'Load game', 'Settings', 'Exit']
@@ -83,15 +179,22 @@ class Menu():
                 buttons[i], (left_top, up_top + (btn_h + top) * i, btn_w, btn_h), font_size, actions[i])
             self.buttons_sprites.add(button)
             self.all_sprites.add(button)
+        self.matrix = Matrix(self)
+
+        pygame.camera.init()
+        self.cam = pygame.camera.Camera(pygame.camera.list_cameras()[0])
+        self.cam.start()
 
     def run(self):
         pg.mixer.music.load('data/sounds/Fnaf_theme.mp3')
         pg.mixer.music.play(-1)
         pg.mixer.music.set_volume(0.5)
         while self.running:
+            self.screen.fill('black')
             for event in pg.event.get():
                 if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     termit()
+            self.matrix.run()
             self.all_sprites.update()
             self.all_sprites.draw(self.screen)
             pg.display.flip()
@@ -313,7 +416,7 @@ class Camers():
     def __init__(self, other):
         self.other = other
         self.gear = pg.sprite.Sprite(self.other.all_sprites)
-        self.orig_gear_image = pg.transform.scale(load_image('Camers/gear1.png'), (WIDTH // 10, WIDTH // 10))
+        self.orig_gear_image = pg.transform.scale(load_image('Camers/gear.png'), (WIDTH // 10, WIDTH // 10))
         self.gear.image = self.orig_gear_image.copy()
         self.gear.rect = self.gear.image.get_rect()
         self.gear.rect.x = WIDTH
@@ -325,13 +428,14 @@ class Camers():
         self.scr.rect.y = 0
         self.scheme = pg.sprite.Sprite(self.other.all_sprites)
         self.scheme.image = pg.transform.scale(load_image('Camers/scheme.png'),
-                                               (self.scr.rect.w * 2 // 3, HEIGHT * 2 // 3))
+                                               (self.scr.rect.w // 3, HEIGHT * 2 // 3))
         self.scheme.rect = self.scheme.image.get_rect()
-        self.scheme.rect.x = self.scr.rect.w // 3 + self.scr.rect.x
+        self.scheme.rect.x = self.scr.rect.w * 2 // 3 + self.scr.rect.x
         self.scheme.rect.y = self.scr.rect.h // 3 + self.scr.rect.y
         self.active = False
         self.move = False
         self.gear_angle = 0
+        self.loads_cums_photos()
 
     def movement(self, event):
         if event.type == pg.KEYDOWN:
@@ -351,14 +455,83 @@ class Camers():
                 self.move = True
 
     def switch_image(self, cum_id):
-        pass
+        self.scr.image = self.get_cam_image(cum_id).copy()
+
+    def get_cam_image(self, cum_id):
+        try:
+            neighbours = self.other.info["camers"][cum_id]["rooms"]
+            neig_keys = list(map(str, neighbours))
+            max_id = [
+                key for key in self.other.map if 'Max' in self.other.map[key]["locator"]][0]
+            elc_id = [
+                key for key in self.other.map if 'Elc' in self.other.map[key]["locator"]][0]
+            ids = []
+            if max_id in neig_keys:
+                ids.append(max_id)
+            if elc_id in neig_keys:
+                ids.append(elc_id)
+            ids = sorted(list(set(ids)))
+            dir_name = '_'.join(ids)
+            if len(ids) == 2:
+                file_name = '_'.join(
+                    map(lambda x: self.other.map[x]["locator"], ids))
+                image = self.cams_photo[cum_id][dir_name][file_name]
+            elif len(ids) == 1:
+                mnstrs = self.other.map[ids[0]]["locator"].split(', ')
+                file_name = '_'.join(mnstrs)
+                image = self.cams_photo[cum_id][dir_name][file_name]
+            else:
+                file_name = cum_id
+                image = self.cams_photo[cum_id][file_name]
+            return image
+        except Exception as e:
+            print(e)
+
+    def loads_cums_photos(self):
+        self.cams_photo = {}
+        path = os.path.join(os.getcwd(), 'data\Camers\cums')
+        dirs = os.listdir(path)
+        for room_id in dirs:
+            places = os.listdir(os.path.join(path, room_id))
+            self.cams_photo[room_id] = {}
+            for file in places:
+                if os.path.isfile(os.path.join(path, room_id, file)):
+                    try:
+                        img = load_image(f'Camers/cums/{room_id}/{file}')
+                        file = file[:file.find('.')]
+                        k = img.get_height() / HEIGHT
+                        if int(img.get_width() / k) < WIDTH:
+                            self.cams_photo[room_id][file] = pg.transform.scale(
+                                img, (WIDTH, HEIGHT))
+                        else:
+                            self.cams_photo[room_id][file] = pg.transform.scale(
+                                img, (int(img.get_width() / k), HEIGHT))
+                    except Exception as e:
+                        print(e)
+                elif os.path.isdir(os.path.join(path, room_id, file)):
+                    file_room = os.listdir(os.path.join(path, room_id, file))
+                    self.cams_photo[room_id][file] = {}
+                    for image in file_room:
+                        try:
+                            img = load_image(
+                                f'Camers/cums/{room_id}/{file}/{image}')
+                            k = img.get_height() / HEIGHT
+                            image = image[:image.find('.')]
+                            if int(img.get_width() / k) < WIDTH:
+                                self.cams_photo[room_id][file][image] = pg.transform.scale(
+                                    img, (WIDTH, HEIGHT))
+                            else:
+                                self.cams_photo[room_id][file][image] = pg.transform.scale(
+                                    img, (int(img.get_width() / k), HEIGHT))
+                        except Exception as e:
+                            print(e)
 
     def move_left(self):
         self.scr.rect.x -= 50
         self.gear_angle += 10
         self.gear_angle = self.gear_angle % 360
         self.gear.image = pg.transform.rotate(self.orig_gear_image, self.gear_angle)
-        self.scheme.rect.x = self.scr.rect.w * 24 // 30 + self.scr.rect.x
+        self.scheme.rect.x = self.scr.rect.w * 2 // 3 + self.scr.rect.x
         if self.scr.rect.x < 0:
             self.scr.rect.x = 0
             self.move = False
@@ -369,7 +542,7 @@ class Camers():
         self.gear_angle -= 10
         self.gear_angle = self.gear_angle % 360
         self.gear.image = pg.transform.rotate(self.orig_gear_image, self.gear_angle)
-        self.scheme.rect.x = self.scr.rect.w * 24 // 30 + self.scr.rect.x
+        self.scheme.rect.x = self.scr.rect.w * 2 // 3 + self.scr.rect.x
         if self.scr.rect.x > WIDTH:
             self.scr.rect.x = WIDTH
             self.move = False
@@ -400,6 +573,10 @@ class Game():
         pg.mixer.music.play(-1)
         pg.mixer.music.set_volume(0.1)
         self.flash_on = False
+        if self.get_mode_camers():
+                self.camers.gear.rect.x = 0
+        else:
+            self.camers.gear.rect.x = WIDTH
         while self.running:
             self.screen.fill(pg.Color(0, 0, 0))
             for event in pg.event.get():
@@ -490,7 +667,7 @@ class Game():
                 if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
                     termit()
                 elif event.type == pg.KEYDOWN and event.key == pg.K_RETURN:
-                    go_game(self.video)
+                    go_game(self.video, self.light_photos)
             self.scrimer_sp_group.draw(self.screen)
             pg.display.flip()
             self.clock.tick(FPS)
@@ -573,7 +750,6 @@ class Game():
             self.arrange_buttons(room_id)
             if self.get_mode_camers():
                 self.camers.gear.rect.x = 0
-                print(self.camers.gear.rect)
             else:
                 self.camers.gear.rect.x = WIDTH
 
