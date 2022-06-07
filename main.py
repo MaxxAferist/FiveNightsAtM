@@ -73,7 +73,7 @@ class Matrix():
         self.cols_speed = np.random.randint(1, 500, size=self.SIZE)
         self.prerendered_chars = self.get_prerendered_chars()
 
-        # self.image = self.get_image('lox.jpg')
+        self.image = self.get_image('data/anonimus.jpg')
 
     def get_frame(self):
         image = self.app.cam.get_image()
@@ -115,7 +115,7 @@ class Matrix():
         self.matrix[mask[:, 0], mask[:, 1]] = new_chars
 
     def draw(self):
-        self.image = self.get_frame()
+        # self.image = self.get_frame()
         for y, row in enumerate(self.matrix):
             for x, char in enumerate(row):
                 if char:
@@ -134,7 +134,7 @@ class Menu():
         self.screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
         self.clock = pg.time.Clock()
         self.all_sprites = pg.sprite.Group()
-        fon_image = load_image('menu/menu_fon.png')
+        # fon_image = load_image('menu/menu_fon.png')
         # self.fon = pg.sprite.Sprite(self.all_sprites)
         # self.fon.image = fon_image
         # self.fon.rect = self.fon.image.get_rect()
@@ -154,11 +154,11 @@ class Menu():
                 buttons[i], (left_top, up_top + (btn_h + top) * i, btn_w, btn_h), font_size, actions[i])
             self.buttons_sprites.add(button)
             self.all_sprites.add(button)
-        self.matrix = Matrix(self)
 
         pygame.camera.init()
         self.cam = pygame.camera.Camera(pygame.camera.list_cameras()[0])
         self.cam.start()
+        self.matrix = Matrix(self)
 
     def run(self):
         pg.mixer.music.load('data/sounds/Fnaf_theme.mp3')
@@ -296,13 +296,13 @@ class Monster():
         timedelta = int((time - self.step_time).total_seconds())
         if timedelta >= self.t_delta:
             print('yeees')
-            choises = [random.choice(self.sounds).play] * 10 + [None] * 90
-            play_song = random.choice(choises)
-            if play_song:
-                play_song()
             choises = [self.room_random] * self.various + [None] * (100 - self.various)
             action = random.choice(choises)
             if action:
+                choises = [random.choice(self.sounds).play] * 10 + [None] * 90
+                play_song = random.choice(choises)
+                if play_song:
+                    play_song()
                 action()
             self.step_time = datetime.datetime.now()
 
@@ -347,28 +347,27 @@ class Monster():
             print(f'{self.name} перешёл из {cur_rom} в {room_id}')
 
 
-class Timer():
+class Timer(pg.sprite.Sprite):
     def __init__(self, other):
-        super().__init__()
+        super().__init__(other.all_sprites)
         self.start_time = datetime.datetime.now()
-        self.x = WIDTH - WIDTH // 12
-        self.y = 0
-        self.other = other
         self.font_size = 40
         self.f = pg.font.Font('data/FNAF.ttf', self.font_size)
+        self.image = self.f.render(f'Cum AM', True, (255, 255, 255))
+        self.rect = self.image.get_rect()
+        self.rect.x = WIDTH - WIDTH // 12
+        self.rect.y = 0
+        self.other = other
 
     def update(self):
         self.time = datetime.datetime.now()
         timedelta = int((self.time - self.start_time).total_seconds()) // 100
-        self.text = self.f.render(f'{timedelta} AM', True, (255, 255, 255))
-        self.other.fon_sprite.image.blit(self.text, (self.x, self.y))
+        self.image = self.f.render(f'{timedelta} AM', True, (255, 255, 255))
 
 
-class Battery():
+class Battery(pg.sprite.Sprite):
     def __init__(self, other):
-        super().__init__()
-        self.x = 10
-        self.y = 10
+        super().__init__(other.all_sprites)
         self.other = other
         self.s = {5: load_image('Battery/Charge_5 +.png'),
                   4: load_image('Battery/Charge_5 +.png'),
@@ -377,6 +376,10 @@ class Battery():
                   1: load_image('Battery/Charge_2 +.png'),
                   0: load_image('Battery/Charge_1 +.png'),
                   -1: load_image('Camers/scheme.png')}
+        self.image = self.s[5]
+        self.rect = self.image.get_rect()
+        self.rect.x = 10
+        self.rect.y = 10
 
     def update(self):
         if self.other.charge == 0:
@@ -384,7 +387,6 @@ class Battery():
         else:
             key = self.other.charge // 20
         self.image = self.s[key]
-        self.other.fon_sprite.image.blit(self.image, (self.x, self.y))
 
 
 class Camers():
@@ -396,8 +398,9 @@ class Camers():
         self.gear.rect = self.gear.image.get_rect()
         self.gear.rect.x = WIDTH
         self.gear.rect.y = HEIGHT // 10
+        self.loads_cums_photos()
         self.scr = pg.sprite.Sprite(self.other.all_sprites)
-        self.scr.image = pg.transform.scale(load_image('ugly_monsters\Max\scremer.png'), (WIDTH, HEIGHT))
+        self.switch_image("5")
         self.scr.rect = self.scr.image.get_rect()
         self.scr.rect.x = WIDTH
         self.scr.rect.y = 0
@@ -410,7 +413,6 @@ class Camers():
         self.active = False
         self.move = False
         self.gear_angle = 0
-        self.loads_cums_photos()
 
     def movement(self, event):
         if event.type == pg.KEYDOWN:
@@ -523,11 +525,13 @@ class Camers():
             self.move = False
             self.active = False
 
+
 class Game():
     def __init__(self, videos=None, light_photos=None):
         self.screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
         self.clock = pg.time.Clock()
         self.all_sprites = pg.sprite.Group()
+        self.fon_sprites = pg.sprite.Group()
         self.running = True
         self.video = videos
         self.light_photos = light_photos
@@ -588,8 +592,9 @@ class Game():
             self.battery.update()
             self.all_sprites.update()
             self.buttons_group.update()
-            self.all_sprites.draw(self.screen)
+            self.fon_sprites.draw(self.screen)
             self.buttons_group.draw(self.screen)
+            self.all_sprites.draw(self.screen)
             pg.display.flip()
             self.clock.tick(FPS)
 
@@ -662,15 +667,15 @@ class Game():
                 self.fon_sprite.rect.x += step
 
     def add_sprite(self):
-        self.fon_sprite = pg.sprite.Sprite(self.all_sprites)
+        self.fon_sprite = pg.sprite.Sprite(self.fon_sprites)
         self.fon_sprite.image = self.current_image()
         self.fon_sprite.rect = self.fon_sprite.image.get_rect()
-        self.timer = Timer(self)
         self.arrange_buttons(self.currect_room_id())
+        self.camers = Camers(self)
+        self.timer = Timer(self)
+        self.battery = Battery(self)
         self.max = Monster(40, 10, "Max", self)
         self.elc = Monster(30, 7, "Elc", self)
-        self.battery = Battery(self)
-        self.camers = Camers(self)
 
     def monsters_update(self):
         self.max.update()
