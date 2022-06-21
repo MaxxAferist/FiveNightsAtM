@@ -17,6 +17,12 @@ FPSVIDEOS = 30
 FPS = 60
 WIDTH = windll.user32.GetSystemMetrics(0)
 HEIGHT = windll.user32.GetSystemMetrics(1)
+sounds = {
+    "Max_1": pg.mixer.Sound('data/sounds/laugh-girl.mp3'),
+    "Elc_1": pg.mixer.Sound('data/sounds/laugh-girl.mp3'),
+    "Max_1_Elc_1": pg.mixer.Sound('data/sounds/laugh-girl.mp3'),
+    "Elc_6": pg.mixer.Sound('data/sounds/Abu Ali - Nasheed - about Prophet Mohammad PBUH.mp3')
+}
 
 
 def pilToSurface(pilImage):
@@ -115,7 +121,7 @@ class Matrix():
         self.matrix[mask[:, 0], mask[:, 1]] = new_chars
 
     def draw(self):
-        # self.image = self.get_frame()
+        self.image = self.get_frame()
         for y, row in enumerate(self.matrix):
             for x, char in enumerate(row):
                 if char:
@@ -281,6 +287,7 @@ class RoomButton(pg.sprite.Sprite):
             self.text = self.f.render(self.name, True, (0, 0, 0))
             self.image.blit(self.text, (self.left_top, self.up_top))
 
+
 class Monster():
     def __init__(self, various, t_delta, name, other):
         self.various = various
@@ -290,6 +297,7 @@ class Monster():
         self.room_id = self.currect_room_id()
         self.step_time = datetime.datetime.now()
         self.add_sounds()
+        self.times = datetime.datetime.now()
 
     def update(self):
         time = datetime.datetime.now()
@@ -312,8 +320,48 @@ class Monster():
         self.sounds = [pg.mixer.Sound(f'data/sounds/sharp/{x}') for x in sounds_names]
 
     def room_random(self):
-        room_id = random.choice(self.get_neighbours())
+        niggers = self.get_neighbours()
+        pl_way = random.choice(self.dist_from_player(self.currect_room_id(), self.other.currect_room_id()))
+        niggers.remove(pl_way)
+        active_distraction = (datetime.datetime.now() - self.times).total_seconds() < 25
+        if not active_distraction:
+            if len(niggers) == 0:
+                room_id = pl_way
+            elif len(niggers) == 1:
+                room_id = random.choice(7 * [pl_way] + 3 * niggers)
+            else:
+                room_id = random.choice(14 * [pl_way] + 3 * [niggers[0]] + 3 * [niggers[1]])
+        else:
+            if len(niggers) == 0:
+                room_id = pl_way
+            elif len(niggers) == 1:
+                room_id = random.choice([pl_way] + 9 * niggers)
+            else:
+                room_id = random.choice([pl_way] + 5 * [niggers[0]] + 5 * [niggers[1]])
         self.trans_room(room_id)
+
+    def dist_from_player(self, cur_room_id, player_room_id):
+        room_ids = [[i, i] for i in self.get_nig(cur_room_id)]
+        res = []
+        flag = False
+        while True:
+            room_clon = []
+            for i in room_ids:
+                if i[1] == player_room_id:
+                    res.append(i[0])
+                    flag = True
+            if flag:
+                return list(set(res))
+            for room in room_ids:
+                niggers = self.get_nig(room[1])
+                for i in niggers:
+                    room_clon.append([room[0], i])
+            room_ids = room_clon.copy()
+
+
+    def get_nig(self, room_id):
+        neigs = list((self.other.map[room_id]["neighbours"].keys()))
+        return neigs
 
     def currect_room_id(self):
         return [key for key in self.other.map if self.name in self.other.map[key]["locator"]][0]
@@ -345,6 +393,7 @@ class Monster():
             self.other.map[cur_room]["locator"] = 'Zero'
             print(self.other.map[room_id]["locator"])
             print(f'{self.name} перешёл из {cur_rom} в {room_id}')
+        self.other.camers.switch_image(self.other.camers.cur_id_cum, False)
 
 
 class Timer(pg.sprite.Sprite):
@@ -358,11 +407,12 @@ class Timer(pg.sprite.Sprite):
         self.rect.x = WIDTH - WIDTH // 12
         self.rect.y = 0
         self.other = other
+        self.time_timer = 0
 
     def update(self):
         self.time = datetime.datetime.now()
-        timedelta = int((self.time - self.start_time).total_seconds()) // 100
-        self.image = self.f.render(f'{timedelta} AM', True, (255, 255, 255))
+        self.time_timer = int((self.time - self.start_time).total_seconds()) // 100
+        self.image = self.f.render(f'{self.time_timer} AM', True, (255, 255, 255))
 
 
 class Battery(pg.sprite.Sprite):
@@ -375,7 +425,7 @@ class Battery(pg.sprite.Sprite):
                   2: load_image('Battery/Charge_3 +.png'),
                   1: load_image('Battery/Charge_2 +.png'),
                   0: load_image('Battery/Charge_1 +.png'),
-                  -1: load_image('Camers/scheme.png')}
+                  -1: load_image('Battery/Charge_0 +.png')}
         self.image = self.s[5]
         self.rect = self.image.get_rect()
         self.rect.x = 10
@@ -392,6 +442,7 @@ class Battery(pg.sprite.Sprite):
 class Camers():
     def __init__(self, other):
         self.other = other
+        self.switch_sound = pg.mixer.Sound('data/Sounds/switch_camera.mp3')
         self.gear = pg.sprite.Sprite(self.other.all_sprites)
         self.orig_gear_image = pg.transform.scale(load_image('Camers/gear.png'), (WIDTH // 10, WIDTH // 10))
         self.gear.image = self.orig_gear_image.copy()
@@ -413,6 +464,10 @@ class Camers():
         self.active = False
         self.move = False
         self.gear_angle = 0
+        self.time_active = datetime.datetime.now()
+        self.cur_id_cum = "5"
+        self.camera_sound = pg.mixer.Sound('data/sounds/camera_main_theme.mp3')
+        self.camera_sound.set_volume(0.1)
 
     def movement(self, event):
         if event.type == pg.KEYDOWN:
@@ -428,10 +483,20 @@ class Camers():
                 self.switch_image("5")
             if event.key == pg.K_6:
                 self.switch_image("6")
-            if event.key == pg.K_TAB:
+            if event.key == pg.K_TAB or event.key == pg.K_ESCAPE:
                 self.move = True
 
-    def switch_image(self, cum_id):
+    def switch_image(self, cum_id, flag=True):
+        self.cur_id_cum = cum_id
+        neighbours = self.other.info["camers"][self.cur_id_cum]["rooms"]
+        if self.other.cur_sound_room in neighbours:
+            self.other.sound_volume = 0.7
+        else:
+            self.other.sound_volume = 0.1
+        if self.other.cur_sound_room != -1:
+            self.other.cur_sound_play.set_volume(self.other.sound_volume)
+        if flag:
+            self.switch_sound.play()
         self.scr.image = self.get_cam_image(cum_id).copy()
 
     def get_cam_image(self, cum_id):
@@ -513,8 +578,19 @@ class Camers():
             self.scr.rect.x = 0
             self.move = False
             self.active = True
+            self.camera_sound.play(-1)
+            neighbours = self.other.info["camers"][self.cur_id_cum]["rooms"]
+            if self.other.cur_sound_room in neighbours:
+                self.other.sound_volume = 0.7
+            else:
+                self.other.sound_volume = 0.2
+            if self.other.cur_sound_room != -1:
+                self.other.cur_sound_play.set_volume(self.other.sound_volume)
 
     def move_right(self):
+        self.other.sound_volume = 0.1
+        if self.other.cur_sound_room != -1:
+            self.other.cur_sound_play.set_volume(self.other.sound_volume)
         self.scr.rect.x += 50
         self.gear_angle -= 10
         self.gear_angle = self.gear_angle % 360
@@ -524,6 +600,7 @@ class Camers():
             self.scr.rect.x = WIDTH
             self.move = False
             self.active = False
+            self.camera_sound.stop()
 
 
 class Game():
@@ -538,6 +615,20 @@ class Game():
         self.flash_light_on = pg.mixer.Sound('data/sounds/flashlight_on.mp3')
         self.flash_light_off = pg.mixer.Sound('data/sounds/flashlight_off.mp3')
         self.charge = 100
+        self.last_distraction = datetime.datetime.now()
+        self.distaction_sound = pg.mixer.Sound('data/sounds/nosehonk.mp3')
+        self.battery_10_sound = pg.mixer.Sound('data/sounds/battery_10.mp3')
+        self.battery_10 = False
+        self.battery_died_sound = pg.mixer.Sound('data/sounds/battery_died.mp3')
+        self.battery_died = False
+        self.chika_sound = pg.mixer.Sound('data/sounds/chika.mp3')
+        self.chimes = pg.mixer.Sound('data/sounds/chimes.mp3')
+        self.easter_egg = False
+        self.camera_load_sound = pg.mixer.Sound('data/sounds/camera_load.mp3')
+        self.cur_sound_room = -1
+        self.cur_sound_play = None
+        self.sound_volume = 0.1
+        self.cur_key = None
 
     def run(self):
         self.load_info()
@@ -547,32 +638,59 @@ class Game():
             self.get_all_videos()
         if not self.light_photos:
             self.loads_light_photos()
+        self.chika_scr = self.get_chika_frames()
+        self.chika_scr = self.chika_scr + self.chika_scr + self.chika_scr
         self.add_sprite()
         pg.mixer.music.load('data/sounds/Main_theme_4.mp3')
         pg.mixer.music.play(-1)
         pg.mixer.music.set_volume(0.1)
         self.flash_on = False
         if self.get_mode_camers():
-                self.camers.gear.rect.x = 0
+            self.camers.gear.rect.x = 0
         else:
             self.camers.gear.rect.x = WIDTH
         while self.running:
             self.screen.fill(pg.Color(0, 0, 0))
             for event in pg.event.get():
-                if event.type == pg.QUIT or event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
-                    termit()
                 if event.type == pg.KEYDOWN and event.key == pg.K_TAB:
-                    if self.get_mode_camers() and not self.camers.move and not self.camers.active:
+                    if self.get_mode_camers() and not self.camers.move and not self.camers.active and self.charge > 0:
                         self.camers.move = True
+                        self.camera_load_sound.play()
+                if event.type == pg.KEYDOWN and event.key == pg.K_v:
+                    if (datetime.datetime.now() - self.last_distraction).total_seconds() > 40 and len(self.get_neighbours()) < 3:
+                        self.distaction_sound.play()
+                        self.last_distraction = datetime.datetime.now()
+                        if self.max.currect_room_id() in self.get_neighbours():
+                            self.max.times = datetime.datetime.now()
+                        if self.elc.currect_room_id() in self.get_neighbours():
+                            self.elc.times = datetime.datetime.now()
                 if self.camers.active:
                     self.camers.movement(event)
+            if self.charge <= 0 and self.camers.active:
+                self.camers.move_right()
+            if self.charge < 20 and not self.battery_10:
+                self.battery_10_sound.play()
+                self.battery_10 = True
+            if self.charge <= 0 and not self.battery_died:
+                self.battery_died_sound.play()
+                self.battery_died = True
+            self.play_sound()
+            if self.camers.active:
+                if (datetime.datetime.now() - self.camers.time_active).total_seconds() > 1 and self.charge > 0:
+                    self.charge -= 0.4
+                    self.camers.time_active = datetime.datetime.now()
+            if self.timer.time_timer == 6 and not self.easter_egg:
+                action = random.choice([self.chika_scrimer] * 2 + [self.chimes.play] * 2 + [None] * 8)
+                self.easter_egg = True
+                if action:
+                    action()
             if self.camers.move and not self.camers.active:
                 self.camers.move_left()
             if self.camers.move and self.camers.active:
                 self.camers.move_right()
             keys = pg.key.get_pressed()
             if keys[pygame.K_SPACE]:
-                if not self.charge == 0:
+                if not self.charge < -0.4:
                     if not self.flash_on:
                         self.charge -= 0.5
                         self.flash_light_on.play()
@@ -581,6 +699,8 @@ class Game():
                         self.fon_sprite.image = self.flash_light().copy()
                     except:
                         pass
+                else:
+                    self.fon_sprite.image = self.current_image()
             else:
                 if self.flash_on:
                     self.flash_light_off.play()
@@ -595,8 +715,45 @@ class Game():
             self.fon_sprites.draw(self.screen)
             self.buttons_group.draw(self.screen)
             self.all_sprites.draw(self.screen)
+            if self.timer.time_timer == 10:
+                self.player_win()
             pg.display.flip()
             self.clock.tick(FPS)
+
+    def play_sound(self):
+        play_sounds = []
+        keys = [f'Max_{self.max.currect_room_id()}', f'Elc_{self.elc.currect_room_id()}', f'Max_{self.max.currect_room_id()}_Elc_{self.elc.currect_room_id()}']
+        sounds_keys = list(sounds.keys())
+        for key in keys:
+            if key in sounds_keys:
+                play_sounds.append(key)
+        if len(play_sounds) == 0:
+            if self.cur_sound_play:
+                self.cur_sound_play.stop()
+            self.cur_key = None
+            self.cur_sound_play = None
+            self.cur_sound_room = -1
+        else:
+            if self.cur_key not in play_sounds:
+                self.cur_key = random.choice(play_sounds)
+                self.cur_sound_room = self.cur_key.split('_')[-1]
+                self.cur_sound_play = sounds[self.cur_key]
+                self.cur_sound_play.play()
+
+    def get_neighbours(self):
+        cur_room_id = self.currect_room_id()
+        neigs = list((self.map[cur_room_id]["neighbours"].keys()))
+        return neigs
+
+    def chika_scrimer(self):
+        self.chika_sound.play()
+        for frame in self.chika_scr:
+            self.screen.blit(frame, (0, 0))
+            pg.display.flip()
+            self.clock.tick(FPSVIDEOS)
+
+    def player_win(self):
+        pass
 
     def flash_light(self):
         try:
@@ -771,6 +928,14 @@ class Game():
                     load_image(f'Transitions_copy/{trans}/{file}'), (WIDTH, HEIGHT)))
         return images
 
+    def get_chika_frames(self):
+        files = os.listdir(f'data/chika_scrim/frames')
+        images = []
+        for file in files:
+            if file.lower().endswith('png') or file.lower().endswith('jpg'):
+                images.append(pg.transform.scale(
+                    load_image(f'chika_scrim/frames/{file}'), (WIDTH, HEIGHT)))
+        return images
 
     def loads_light_photos(self):
         self.light_photos = {}

@@ -5,7 +5,7 @@
             "neighbours": {
                 "2": "Сменить позицию"
             },
-            "locator": "Zero",
+            "locator": "Vasia",
             "img": "views/1.JPEG"
         },
         "2": {
@@ -61,7 +61,7 @@
                 "8": "Кухня",
                 "9": "Коридор"
             },
-            "locator": "Vasia",
+            "locator": "Zero",
             "img": "views/7.JPG"
         },
         "8": {
