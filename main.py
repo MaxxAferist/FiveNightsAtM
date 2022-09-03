@@ -121,7 +121,7 @@ class Matrix():
         self.matrix[mask[:, 0], mask[:, 1]] = new_chars
 
     def draw(self):
-        self.image = self.get_frame()
+        # self.image = self.get_frame()
         for y, row in enumerate(self.matrix):
             for x, char in enumerate(row):
                 if char:
@@ -297,14 +297,19 @@ class Monster():
         self.room_id = self.currect_room_id()
         self.step_time = datetime.datetime.now()
         self.add_sounds()
-        self.times = datetime.datetime.now()
+        self.times = datetime.datetime(2021, 12, 12)
 
     def update(self):
         time = datetime.datetime.now()
         timedelta = int((time - self.step_time).total_seconds())
         if timedelta >= self.t_delta:
             print('yeees')
-            choises = [self.room_random] * self.various + [None] * (100 - self.various)
+            active_distraction = (datetime.datetime.now() - self.times).total_seconds() < 25
+            if not active_distraction:
+                choises = [self.room_random] * self.various + [None] * (100 - self.various)
+            else:
+                choises = [self.room_random] * self.various * 2 + \
+                    [None] * (100 - self.various * 2)
             action = random.choice(choises)
             if action:
                 choises = [random.choice(self.sounds).play] * 10 + [None] * 90
@@ -321,7 +326,7 @@ class Monster():
 
     def room_random(self):
         niggers = self.get_neighbours()
-        pl_way = random.choice(self.dist_from_player(self.currect_room_id(), self.other.currect_room_id()))
+        pl_way = random.choice(self.dist_from_player(self.currect_room_id(), self.other.currect_room_id())[0])
         niggers.remove(pl_way)
         active_distraction = (datetime.datetime.now() - self.times).total_seconds() < 25
         if not active_distraction:
@@ -344,6 +349,7 @@ class Monster():
         room_ids = [[i, i] for i in self.get_nig(cur_room_id)]
         res = []
         flag = False
+        dist = 1
         while True:
             room_clon = []
             for i in room_ids:
@@ -351,12 +357,13 @@ class Monster():
                     res.append(i[0])
                     flag = True
             if flag:
-                return list(set(res))
+                return [list(set(res)), dist]
             for room in room_ids:
                 niggers = self.get_nig(room[1])
                 for i in niggers:
                     room_clon.append([room[0], i])
             room_ids = room_clon.copy()
+            dist += 1
 
 
     def get_nig(self, room_id):
@@ -386,13 +393,23 @@ class Monster():
                 monsters = ['Max', 'Elc']
                 del monsters[monsters.index(self.name)]
                 self.other.map[cur_room]["locator"] = monsters[0]
-            print(f'{self.name} перешёл из {cur_rom} в {room_id}')
+            active_distraction = (datetime.datetime.now() - self.times).total_seconds() < 25
+            if not active_distraction:
+                print(f'{self.name} перешёл из {cur_rom} в {room_id}')
+            else:
+                print(f'{self.name} перешёл из {cur_rom} в {room_id} from distraction')
         else:
             cur_room = self.currect_room_id()
             self.other.map[room_id]["locator"] = 'Max, Elc'
             self.other.map[cur_room]["locator"] = 'Zero'
             print(self.other.map[room_id]["locator"])
-            print(f'{self.name} перешёл из {cur_rom} в {room_id}')
+            active_distraction = (
+                datetime.datetime.now() - self.times).total_seconds() < 25
+            if not active_distraction:
+                print(f'{self.name} перешёл из {cur_rom} в {room_id}')
+            else:
+                print(
+                    f'{self.name} перешёл из {cur_rom} в {room_id} from distraction')
         self.other.camers.switch_image(self.other.camers.cur_id_cum, False)
 
 
@@ -660,9 +677,17 @@ class Game():
                     if (datetime.datetime.now() - self.last_distraction).total_seconds() > 40 and len(self.get_neighbours()) < 3:
                         self.distaction_sound.play()
                         self.last_distraction = datetime.datetime.now()
-                        if self.max.currect_room_id() in self.get_neighbours():
+                        distance_max = self.max.dist_from_player(self.max.currect_room_id(), self.currect_room_id())[1]
+                        if distance_max == 1:
                             self.max.times = datetime.datetime.now()
-                        if self.elc.currect_room_id() in self.get_neighbours():
+                            self.max.room_random()
+                        elif distance_max == 2:
+                            self.max.times = datetime.datetime.now()
+                        distance_elc = self.elc.dist_from_player(self.elc.currect_room_id(), self.currect_room_id())[1]
+                        if distance_elc == 1:
+                            self.elc.times = datetime.datetime.now()
+                            self.elc.room_random()
+                        elif distance_elc == 2:
                             self.elc.times = datetime.datetime.now()
                 if self.camers.active:
                     self.camers.movement(event)
